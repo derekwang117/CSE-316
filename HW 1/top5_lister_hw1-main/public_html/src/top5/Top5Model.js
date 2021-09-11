@@ -1,6 +1,7 @@
 import jsTPS from "../common/jsTPS.js"
 import Top5List from "./Top5List.js";
 import ChangeItem_Transaction from "./transactions/ChangeItem_Transaction.js"
+import ChangeList_Transaction from "./transactions/ChangeList_Transaction.js"
 
 /**
  * Top5Model.js
@@ -146,9 +147,24 @@ export default class Top5Model {
         this.tps.addTransaction(transaction);
     }
 
+    // mine :D
+    addChangeListTransaction = (id, newText) => {
+        // GET THE CURRENT TEXT
+        let oldText = this.currentList.getName();
+        let transaction = new ChangeList_Transaction(this, id, oldText, newText);
+        this.tps.addTransaction(transaction);
+    }
+
     changeItem(id, text) {
         this.currentList.items[id] = text;
         this.view.update(this.currentList);
+        this.saveLists();
+    }
+
+    // mine :D
+    changeList(id, text) {
+        this.currentList.setName(text);
+        this.sortLists()
         this.saveLists();
     }
 

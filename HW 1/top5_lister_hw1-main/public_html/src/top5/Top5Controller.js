@@ -81,6 +81,34 @@ export default class Top5Controller {
             deleteSpan.appendChild(document.createTextNode(listName));
             modal.classList.add("is-visible");
         }
+
+        // D: text editing
+        document.getElementById("top5-list-" + id).ondblclick = (event) => {
+            let thisList = document.getElementById("top5-list-" + id)
+
+            // CLEAR THE TEXT
+            thisList.innerHTML = "";
+
+            // ADD A TEXT FIELD
+            let textInput = document.createElement("input");
+            textInput.setAttribute("type", "text");
+            textInput.setAttribute("id", "top5-list-" + id);
+            textInput.setAttribute("value", this.model.currentList.getName());
+
+            thisList.appendChild(textInput);
+
+            textInput.ondblclick = (event) => {
+                this.ignoreParentClick(event);
+            }
+            textInput.onkeydown = (event) => {
+                if (event.key === 'Enter') {
+                    this.model.addChangeListTransaction(id, event.target.value);
+                }
+            }
+            textInput.onblur = (event) => {
+                this.model.sortLists()
+            }
+        }
     }
 
     ignoreParentClick(event) {
