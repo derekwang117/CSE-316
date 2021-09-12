@@ -120,10 +120,14 @@ export default class Top5Controller {
             textInput.onkeydown = (event) => {
                 if (event.key === 'Enter') {
                     this.model.changeList(event.target.value);
+                    //this.model.unselectAll();
+                    this.model.loadList(id);
                 }
             }
             textInput.onblur = (event) => {
                 this.model.changeList(event.target.value);
+                // not needed: this.model.unselectAll();
+                this.model.loadList(id);
             }
         }
 
