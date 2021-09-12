@@ -151,6 +151,8 @@ export default class Top5Model {
         this.currentList.items[id] = text;
         this.view.update(this.currentList);
         this.saveLists();
+        
+        this.view.updateToolbarButtons(this);
     }
 
     // mine :D
@@ -185,10 +187,9 @@ export default class Top5Model {
 
     // D:
     moveItem(oldItemIndex, newItemIndex) {
-        console.log(this.currentList);
         this.currentList.moveItem(oldItemIndex, newItemIndex);
-        console.log(this.currentList);
         this.view.update(this.currentList);
+        this.view.updateToolbarButtons(this);
         this.saveLists();
     }
 
@@ -196,6 +197,14 @@ export default class Top5Model {
     undo() {
         if (this.tps.hasTransactionToUndo()) {
             this.tps.undoTransaction();
+            this.view.updateToolbarButtons(this);
+        }
+    }
+
+    // D:
+    redo() {
+        if (this.tps.hasTransactionToRedo()) {
+            this.tps.doTransaction();
             this.view.updateToolbarButtons(this);
         }
     }
