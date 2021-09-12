@@ -1,7 +1,6 @@
 import jsTPS from "../common/jsTPS.js"
 import Top5List from "./Top5List.js";
 import ChangeItem_Transaction from "./transactions/ChangeItem_Transaction.js"
-import ChangeList_Transaction from "./transactions/ChangeList_Transaction.js"
 
 /**
  * Top5Model.js
@@ -85,7 +84,7 @@ export default class Top5Model {
     unselectAll() {
         for (let i = 0; i < this.top5Lists.length; i++) {
             let list = this.top5Lists[i];
-            this.view.unhighlightList(i);
+            this.view.unhighlightList(this.getList(i).id);
         }
     }
 
@@ -99,7 +98,7 @@ export default class Top5Model {
                 // THIS IS THE LIST TO LOAD
                 this.currentList = list;
                 this.view.update(this.currentList);
-                this.view.highlightList(i);
+                this.view.highlightList(id);
                 found = true;
             }
             i++;
@@ -147,14 +146,6 @@ export default class Top5Model {
         this.tps.addTransaction(transaction);
     }
 
-    // mine :D
-    addChangeListTransaction = (id, newText) => {
-        // GET THE CURRENT TEXT
-        let oldText = this.currentList.getName();
-        let transaction = new ChangeList_Transaction(this, id, oldText, newText);
-        this.tps.addTransaction(transaction);
-    }
-
     changeItem(id, text) {
         this.currentList.items[id] = text;
         this.view.update(this.currentList);
@@ -162,7 +153,7 @@ export default class Top5Model {
     }
 
     // mine :D
-    changeList(id, text) {
+    changeList(text) {
         this.currentList.setName(text);
         this.sortLists()
         this.saveLists();
@@ -176,6 +167,13 @@ export default class Top5Model {
     // mine :D
     unhover(id) {
         this.view.unhoverList(id);
+    }
+
+    // D:
+    deleteList(id) {
+        this.top5Lists.splice(this.getListIndex(id),1);
+        this.view.refreshLists(this.top5Lists);
+        this.saveLists();
     }
 
     // SIMPLE UNDO/REDO FUNCTIONS

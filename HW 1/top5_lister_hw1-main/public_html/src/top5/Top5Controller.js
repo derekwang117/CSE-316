@@ -54,10 +54,25 @@ export default class Top5Controller {
                         }
                     }
                     textInput.onblur = (event) => {
-                        this.model.restoreList();
+                        this.model.addChangeItemTransaction(i-1, event.target.value);
+                        // this.model.restoreList();
                     }
                 }
             }
+        }
+
+        // D: Document list confirm/delete button
+        document.getElementById("dialog-confirm-button").onmousedown = (event) => {
+            let modal = document.getElementById("delete-modal");
+
+            this.model.deleteList(modal.listId);
+
+            modal.classList.remove("is-visible");
+
+        }
+        document.getElementById("dialog-cancel-button").onmousedown = (event) => {
+            let modal = document.getElementById("delete-modal");
+            modal.classList.remove("is-visible");
         }
     }
 
@@ -74,12 +89,14 @@ export default class Top5Controller {
             this.ignoreParentClick(event);
             // VERIFY THAT THE USER REALLY WANTS TO DELETE THE LIST
             let modal = document.getElementById("delete-modal");
-            this.listToDeleteIndex = id;
-            let listName = this.model.getList(id).getName();
+            this.listToDeleteIndex = this.model.getListIndex(id);
+            let listName = this.model.getList(this.model.getListIndex(id)).getName();
             let deleteSpan = document.getElementById("delete-list-span");
             deleteSpan.innerHTML = "";
             deleteSpan.appendChild(document.createTextNode(listName));
             modal.classList.add("is-visible");
+
+            modal.listId = id;
         }
 
         // D: list name editing
@@ -102,11 +119,11 @@ export default class Top5Controller {
             }
             textInput.onkeydown = (event) => {
                 if (event.key === 'Enter') {
-                    this.model.addChangeListTransaction(id, event.target.value);
+                    this.model.changeList(event.target.value);
                 }
             }
             textInput.onblur = (event) => {
-                this.model.sortLists()
+                this.model.changeList(event.target.value);
             }
         }
 
