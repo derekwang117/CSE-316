@@ -168,6 +168,16 @@ export default class Top5Model {
         this.saveLists();
     }
 
+    // mine :D
+    hover(id) {
+        this.view.hoverList(id);
+    }
+
+    // mine :D
+    unhover(id) {
+        this.view.unhoverList(id);
+    }
+
     // SIMPLE UNDO/REDO FUNCTIONS
     undo() {
         if (this.tps.hasTransactionToUndo()) {

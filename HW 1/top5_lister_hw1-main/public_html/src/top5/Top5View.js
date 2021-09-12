@@ -100,6 +100,20 @@ export default class Top5View {
         listCard.classList.remove("selected-list-card");
     }
 
+    // D: 
+    hoverList(listId) {
+        // Hover THE LIST
+        let listCard = document.getElementById("top5-list-" + listId);
+        listCard.classList.add("hovered-list-card");
+    }
+
+    // D:
+    unhoverList(listId) {
+        // unHover THE LIST
+        let listCard = document.getElementById("top5-list-" + listId);
+        listCard.classList.remove("hovered-list-card");
+    }
+
     updateToolbarButtons(model) {
         let tps = model.tps;
         if (!tps.hasTransactionToUndo()) {

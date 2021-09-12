@@ -100,7 +100,7 @@ body {
   overflow: scroll;
 }
 
-.list-card, .selected-list-card, .unselected-list-card {
+.list-card, .selected-list-card, .unselected-list-card, .hovered-list-card {
   font-size: 18pt;
   margin: 10px;
   padding: 20px;
@@ -114,6 +114,11 @@ body {
 
 .unselected-list-card {
   background-color: var(--swatch-complement);
+}
+
+.hovered-list-card {
+  background-color: black;
+  color: white;
 }
 
 .list-card-button {

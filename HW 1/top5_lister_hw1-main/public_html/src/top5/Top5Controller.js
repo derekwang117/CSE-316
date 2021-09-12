@@ -82,7 +82,7 @@ export default class Top5Controller {
             modal.classList.add("is-visible");
         }
 
-        // D: text editing
+        // D: list name editing
         document.getElementById("top5-list-" + id).ondblclick = (event) => {
             let thisList = document.getElementById("top5-list-" + id)
 
@@ -108,6 +108,14 @@ export default class Top5Controller {
             textInput.onblur = (event) => {
                 this.model.sortLists()
             }
+        }
+
+        // D: mouse-over highlighting
+        document.getElementById("top5-list-" + id).onmouseover = (event) => {
+            this.model.hover(id);
+        }
+        document.getElementById("top5-list-" + id).onmouseout = (event) => {
+            this.model.unhover(id);
         }
     }
 
