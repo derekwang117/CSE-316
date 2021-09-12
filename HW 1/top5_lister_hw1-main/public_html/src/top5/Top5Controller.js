@@ -59,6 +59,18 @@ export default class Top5Controller {
                     }
                 }
             }
+
+            // make items draggable
+            item.ondragstart = (event) => {
+                event.dataTransfer.setData("targetId", event.target.id);
+            }
+            item.ondrop = (event) => {
+                let targetId = event.dataTransfer.getData("targetId");
+                this.model.addMoveItemTransaction(Number(targetId.slice(5)), Number(event.target.id.slice(5)));
+            }
+            item.ondragover = (event) => {
+                event.preventDefault();
+            }
         }
 
         // D: Document list confirm/delete button
