@@ -106,6 +106,7 @@ export default class Top5Model {
         }
         this.tps.clearAllTransactions();
         this.view.updateToolbarButtons(this);
+        this.view.updateStatusBar(this);
     }
 
     loadLists() {
@@ -209,11 +210,13 @@ export default class Top5Model {
         }
     }
 
+    // D:
     closeOut() {
         this.currentList = null;
         this.unselectAll();
         this.view.clearWorkspace();
         this.tps.clearAllTransactions();
         this.view.updateToolbarButtons(this);
+        this.view.updateStatusBar(this);
     }
 }

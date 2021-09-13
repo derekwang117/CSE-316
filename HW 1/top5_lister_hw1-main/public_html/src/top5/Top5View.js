@@ -137,4 +137,11 @@ export default class Top5View {
             this.disableButton("add-list-button");
         }
     }
+    // D:
+    updateStatusBar(model) {
+        let status = document.getElementById("top5-statusbar");
+        status.innerHTML = "";
+        if (model.currentList)
+            status.appendChild(document.createTextNode("Top 5 " + model.currentList.name));
+    }
 }

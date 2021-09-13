@@ -93,6 +93,7 @@ export default class Top5Controller {
             let modal = document.getElementById("delete-modal");
 
             this.model.deleteList(modal.listId);
+            this.model.closeOut();
 
             modal.classList.remove("is-visible");
 
