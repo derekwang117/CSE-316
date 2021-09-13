@@ -208,4 +208,12 @@ export default class Top5Model {
             this.view.updateToolbarButtons(this);
         }
     }
+
+    closeOut() {
+        this.currentList = null;
+        this.unselectAll();
+        this.view.clearWorkspace();
+        this.tps.clearAllTransactions();
+        this.view.updateToolbarButtons(this);
+    }
 }

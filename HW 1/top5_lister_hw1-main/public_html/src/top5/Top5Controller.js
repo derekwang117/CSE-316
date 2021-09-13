@@ -19,9 +19,11 @@ export default class Top5Controller {
     initHandlers() {
         // SETUP THE TOOLBAR BUTTON HANDLERS
         document.getElementById("add-list-button").onmousedown = (event) => {
-            let newList = this.model.addNewList("Untitled", ["?","?","?","?","?"]);            
-            this.model.loadList(newList.id);
-            this.model.saveLists();
+            if (!this.model.currentList) {
+                let newList = this.model.addNewList("Untitled", ["?","?","?","?","?"]);            
+                this.model.loadList(newList.id);
+                this.model.saveLists();
+            }
         }
         document.getElementById("undo-button").onmousedown = (event) => {
             this.model.undo();
@@ -30,6 +32,9 @@ export default class Top5Controller {
         // D:
         document.getElementById("redo-button").onmousedown = (event) => {
             this.model.redo();
+        }
+        document.getElementById("close-button").onmousedown = (event) => {
+            this.model.closeOut();
         }
 
         // SETUP THE ITEM HANDLERS
