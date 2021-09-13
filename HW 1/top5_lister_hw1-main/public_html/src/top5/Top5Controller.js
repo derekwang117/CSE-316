@@ -47,6 +47,9 @@ export default class Top5Controller {
                     // CLEAR THE TEXT
                     item.innerHTML = "";
 
+                    // remove draggable to fix clicking text bubble bug
+                    item.removeAttribute("draggable");
+
                     // ADD A TEXT FIELD
                     let textInput = document.createElement("input");
                     textInput.setAttribute("type", "text");
@@ -61,10 +64,12 @@ export default class Top5Controller {
                     textInput.onkeydown = (event) => {
                         if (event.key === 'Enter') {
                             this.model.addChangeItemTransaction(i-1, event.target.value);
+                            item.setAttribute("draggable", true);
                         }
                     }
                     textInput.onblur = (event) => {
                         this.model.addChangeItemTransaction(i-1, event.target.value);
+                        item.setAttribute("draggable", true);
                         // this.model.restoreList();
                     }
                 }
