@@ -65,10 +65,10 @@ export default class Top5Model {
 
     sortLists() {
         this.top5Lists.sort((listA, listB) => {
-            if (listA.getName() < listB.getName()) {
+            if (listA.getName().toLowerCase() < listB.getName().toLowerCase()) {
                 return -1;
             }
-            else if (listA.getName === listB.getName()) {
+            else if (listA.getName().toLowerCase() === listB.getName().toLowerCase()) {
                 return 0;
             }
             else {
@@ -144,8 +144,12 @@ export default class Top5Model {
     addChangeItemTransaction = (id, newText) => {
         // GET THE CURRENT TEXT
         let oldText = this.currentList.items[id];
-        let transaction = new ChangeItem_Transaction(this, id, oldText, newText);
-        this.tps.addTransaction(transaction);
+        if (oldText !== newText) {
+            let transaction = new ChangeItem_Transaction(this, id, oldText, newText);
+            this.tps.addTransaction(transaction);
+        }
+        else
+            this.changeItem(id, newText);
     }
 
     changeItem(id, text) {
@@ -159,7 +163,7 @@ export default class Top5Model {
     // mine :D
     changeList(text) {
         this.currentList.setName(text);
-        this.sortLists()
+        this.sortLists();
         this.saveLists();
     }
 
@@ -213,6 +217,7 @@ export default class Top5Model {
     // D:
     closeOut() {
         this.currentList = null;
+        this.sortLists();
         this.unselectAll();
         this.view.clearWorkspace();
         this.tps.clearAllTransactions();

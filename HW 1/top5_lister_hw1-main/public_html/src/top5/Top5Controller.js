@@ -8,6 +8,7 @@
  */
 export default class Top5Controller {
     constructor() {
+        this.listEditing = false;
 
     }
 
@@ -27,14 +28,17 @@ export default class Top5Controller {
         }
         document.getElementById("undo-button").onmousedown = (event) => {
             this.model.undo();
+            this.listEditing = false;
         }
 
         // D:
         document.getElementById("redo-button").onmousedown = (event) => {
             this.model.redo();
+            this.listEditing = false;
         }
         document.getElementById("close-button").onmousedown = (event) => {
             this.model.closeOut();
+            this.listEditing = false;
         }
 
         // SETUP THE ITEM HANDLERS
@@ -54,9 +58,11 @@ export default class Top5Controller {
                     let textInput = document.createElement("input");
                     textInput.setAttribute("type", "text");
                     textInput.setAttribute("id", "item-text-input-" + i);
-                    textInput.setAttribute("value", this.model.currentList.getItemAt(i-1));
 
                     item.appendChild(textInput);
+
+                    textInput.focus();
+                    textInput.value = this.model.currentList.getItemAt(i-1);
 
                     textInput.ondblclick = (event) => {
                         this.ignoreParentClick(event);
@@ -107,10 +113,13 @@ export default class Top5Controller {
     registerListSelectHandlers(id) {
         // FOR SELECTING THE LIST
         document.getElementById("top5-list-" + id).onmousedown = (event) => {
-            this.model.unselectAll();
+            if (!this.listEditing)
+            {
+                this.model.unselectAll();
 
-            // GET THE SELECTED LIST
-            this.model.loadList(id);
+                // GET THE SELECTED LIST
+                this.model.loadList(id);
+            }
         }
         // FOR DELETING THE LIST
         document.getElementById("delete-list-" + id).onmousedown = (event) => {
@@ -131,6 +140,8 @@ export default class Top5Controller {
         document.getElementById("top5-list-" + id).ondblclick = (event) => {
             let thisList = document.getElementById("top5-list-" + id)
 
+            this.listEditing = true;
+
             // CLEAR THE TEXT
             thisList.innerHTML = "";
 
@@ -138,9 +149,11 @@ export default class Top5Controller {
             let textInput = document.createElement("input");
             textInput.setAttribute("type", "text");
             textInput.setAttribute("id", "top5-list-" + id);
-            textInput.setAttribute("value", this.model.currentList.getName());
 
             thisList.appendChild(textInput);
+            
+            textInput.focus();
+            textInput.value = this.model.currentList.getName();
 
             textInput.ondblclick = (event) => {
                 this.ignoreParentClick(event);
@@ -150,12 +163,16 @@ export default class Top5Controller {
                     this.model.changeList(event.target.value);
                     //this.model.unselectAll();
                     this.model.loadList(id);
+
+                    this.listEditing = false;
                 }
             }
             textInput.onblur = (event) => {
                 this.model.changeList(event.target.value);
                 // not needed: this.model.unselectAll();
                 this.model.loadList(id);
+
+                this.listEditing = false;
             }
         }
 
