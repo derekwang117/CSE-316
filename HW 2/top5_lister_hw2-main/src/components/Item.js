@@ -3,7 +3,9 @@ import React from "react";
 export default class Item extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {name: this.props.name}
+        this.state = {
+            name: this.props.name,
+            index: this.props.index}
     }
     handleClick = (event) => {
         if (event.detail === 2) {
@@ -45,10 +47,9 @@ export default class Item extends React.Component {
     render() {
         return (
             <div
-                    id={"item-" + this.props.index}
-                    className={"top5-item"}
-                >
+                id={"item-" + this.props.index+1}
+                className={"top5-item"}>
                 {this.props.name}
-                </div>)
+            </div>)
     }
 }
