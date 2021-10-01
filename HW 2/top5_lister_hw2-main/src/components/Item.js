@@ -5,7 +5,8 @@ export default class Item extends React.Component {
         super(props);
         this.state = {
             name: this.props.name,
-            index: this.props.index}
+            index: this.props.index,
+            editActive: false}
     }
     handleClick = (event) => {
         if (event.detail === 2) {
@@ -37,19 +38,41 @@ export default class Item extends React.Component {
         }
     }
     handleBlur = () => {
-        //let key = this.props.keyNamePair.key;
+        let index = this.state.index;
         let textValue = this.state.name;
         console.log("Item handleBlur: " + textValue);
-        //this.props.renameItemCallback(key, textValue);
+        this.props.renameItemCallback(index, textValue);
         this.handleToggleEdit();
     }
 
     render() {
-        return (
-            <div
-                id={"item-" + this.props.index+1}
-                className={"top5-item"}>
-                {this.props.name}
-            </div>)
+        if (this.state.editActive) {
+            return (
+                <div
+                    id={"item-" + (this.props.index+1)}
+                    className={"top5-item"}
+                    onClick={this.handleClick}>
+                    <input
+                    id={"item-" + (this.props.index+1)}
+                    className='list-card'
+                    type='input'
+                    onKeyPress={this.handleKeyPress}
+                    onBlur={this.handleBlur}
+                    onChange={this.handleUpdate}
+                    defaultValue={this.props.name}
+                    autoFocus
+                    />
+                </div>
+                )
+        }
+        else {
+            return (
+                <div
+                    id={"item-" + (this.props.index+1)}
+                    className={"top5-item"}
+                    onClick={this.handleClick}>
+                    {this.props.name}
+                </div>)
+        }
     }
 }
