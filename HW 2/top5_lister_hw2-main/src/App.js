@@ -35,6 +35,9 @@ class App extends React.Component {
         // use jsTPS to manage transaction stack
         this.tps = new jsTPS();
     }
+    componentDidMount() {
+        window.addEventListener('keydown', this.handleKeyPress)
+    }
     sortKeyNamePairsByName = (keyNamePairs) => {
         keyNamePairs.sort((keyPair1, keyPair2) => {
             // GET THE LISTS
@@ -233,6 +236,14 @@ class App extends React.Component {
         if (this.tps.hasTransactionToRedo()) {
             this.tps.doTransaction();
             this.saveItems();
+        }
+    }
+    handleKeyPress = (event) => {
+        if (event.ctrlKey && event.key === "z") {
+            this.undo();
+        }
+        else if (event.ctrlKey && event.key === "y") {
+            this.redo();
         }
     }
 
