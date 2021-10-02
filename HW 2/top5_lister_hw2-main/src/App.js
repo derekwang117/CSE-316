@@ -120,6 +120,15 @@ class App extends React.Component {
             this.db.mutationUpdateSessionData(this.state.sessionData);
         });
     }
+    // D: Change item order
+    reorderItems = (oldIndex, newIndex) => {
+        let newList = this.state.currentList;
+        newList.items.splice(newIndex, 0, newList.items.splice(oldIndex, 1)[0])
+        this.setState(prevState => ({
+            currentList: newList,
+            sessionData: prevState.sessionData
+        }))
+    }
     // THIS FUNCTION BEGINS THE PROCESS OF LOADING A LIST FOR EDITING
     loadList = (key) => {
         let newCurrentList = this.db.queryGetList(key);
@@ -175,7 +184,8 @@ class App extends React.Component {
                 />
                 <Workspace
                     currentList={this.state.currentList}
-                    renameItemCallback={this.renameItem} />
+                    renameItemCallback={this.renameItem}
+                    reorderItems={this.reorderItems} />
                 <Statusbar 
                     currentList={this.state.currentList} />
                 <DeleteModal

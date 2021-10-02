@@ -5,7 +5,6 @@ export default class Item extends React.Component {
         super(props);
         this.state = {
             name: this.props.name,
-            index: this.props.index,
             editActive: false}
     }
     handleClick = (event) => {
@@ -13,17 +12,6 @@ export default class Item extends React.Component {
             this.handleToggleEdit(event);
         }
     }
-    /*handleLoadItem = (event) => {
-        let itemKey = event.target.id;
-        if (listKey.startsWith("list-card-text-")) {
-            listKey = listKey.substring("list-card-text-".length);
-        }
-        this.props.loadListCallback(listKey);
-    }*/
-    /*handleDeleteList = (event) => {
-        event.stopPropagation();
-        this.props.deleteListCallback(this.props.keyNamePair);
-    }*/
     handleToggleEdit = (event) => {
         this.setState({
             editActive: !this.state.editActive
@@ -38,11 +26,17 @@ export default class Item extends React.Component {
         }
     }
     handleBlur = () => {
-        let index = this.state.index;
+        let index = this.props.index;
         let textValue = this.state.name;
         console.log("Item handleBlur: " + textValue);
         this.props.renameItemCallback(index, textValue);
         this.handleToggleEdit();
+    }
+    handleDragStart = (event) => {
+        this.props.dragStartGetter(event.target.id.slice(5) - 1);
+    }
+    handleDragEnter = (event) => {
+        this.props.dragEnterGetter(event.target.id.slice(5) - 1);
     }
 
     render() {
@@ -70,7 +64,11 @@ export default class Item extends React.Component {
                 <div
                     id={"item-" + (this.props.index+1)}
                     className={"top5-item"}
-                    onClick={this.handleClick}>
+                    onClick={this.handleClick}
+                    draggable={true}
+                    onDragStart={this.handleDragStart}
+                    onDragEnter={this.handleDragEnter}
+                    >
                     {this.props.name}
                 </div>)
         }

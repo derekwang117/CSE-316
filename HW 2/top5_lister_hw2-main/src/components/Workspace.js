@@ -2,6 +2,29 @@ import React from "react";
 import Item from "./Item";
 
 export default class Workspace extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            draggedIndex : 0
+        }
+    }
+    dragStartGetter = (index) => {
+        //event.dataTransfer.setData("targetId", event.target.id);
+        this.setState({
+            draggedIndex: index
+        })
+    }
+    dragEnterGetter = (index) => {
+        let draggedID = this.state.draggedIndex;
+        let droppedID = index;
+        this.setState({
+            draggedIndex: index
+        })
+        if (draggedID !== droppedID) {
+            this.props.reorderItems(draggedID, droppedID);
+        }
+    }
+    
     render() {
         const { currentList,
                 renameItemCallback} = this.props;
@@ -24,6 +47,8 @@ export default class Workspace extends React.Component {
                                     index={index}
                                     key={index}
                                     renameItemCallback={renameItemCallback}
+                                    dragStartGetter={this.dragStartGetter}
+                                    dragEnterGetter={this.dragEnterGetter}
                                 />
                                 ))
                             : null
