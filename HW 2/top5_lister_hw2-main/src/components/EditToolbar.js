@@ -4,25 +4,28 @@ export default class EditToolbar extends React.Component {
     render() {
         const { undoCallback,
                 redoCallback,
-                closeCallback
+                closeCallback,
+                canUndo,
+                canRedo,
+                currentList
         } = this.props
         return (
             <div id="edit-toolbar">
                 <div 
                     id='undo-button' 
-                    className="top5-button"
+                    className={canUndo ? "top5-button" : "top5-button-disabled"}
                     onClick={undoCallback}>
                         &#x21B6;
                 </div>
                 <div
                     id='redo-button'
-                    className="top5-button"
+                    className={canRedo ? "top5-button" : "top5-button-disabled"}
                     onClick={redoCallback}>
                         &#x21B7;
                 </div>
                 <div
                     id='close-button'
-                    className="top5-button"
+                    className={currentList ? "top5-button" : "top5-button-disabled"}
                     onClick={closeCallback}>
                         &#x24E7;
                 </div>
