@@ -5,26 +5,35 @@ export default class Workspace extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            draggedIndex : 0
+            draggedIndex : 0,
+            dragActive: false
         }
     }
     dragStartGetter = (index) => {
-        //event.dataTransfer.setData("targetId", event.target.id);
         this.setState({
-            draggedIndex: index
+            draggedIndex: index,
+            dragActive: true
         })
     }
-    dragEnterGetter = (index) => {
-        let draggedID = this.state.draggedIndex;
-        let droppedID = index;
+    dragEnterGetter = (event) => {
+        let index = event.target.id.slice(5) - 1
+        let draggedIndex = this.state.draggedIndex;
+        let droppedIndex = index;
         this.setState({
-            draggedIndex: index
+            draggedIndex: index,
+            dragActive: true
         })
-        if (draggedID !== droppedID) {
-            this.props.reorderItems(draggedID, droppedID);
+        if (draggedIndex !== droppedIndex) {
+            this.props.reorderItemsCallback(draggedIndex, droppedIndex);
         }
     }
-    
+    dragEndGetter = (event) => {
+        this.setState(prevState => ({
+            draggedIndex: prevState.draggedIndex,
+            dragActive: false
+        }))
+        this.props.saveItemsCallback();
+    }
     render() {
         const { currentList,
                 renameItemCallback} = this.props;
@@ -49,6 +58,9 @@ export default class Workspace extends React.Component {
                                     renameItemCallback={renameItemCallback}
                                     dragStartGetter={this.dragStartGetter}
                                     dragEnterGetter={this.dragEnterGetter}
+                                    draggedIndex={this.state.draggedIndex}
+                                    dragEndGetter={this.dragEndGetter}
+                                    dragActive={this.state.dragActive}
                                 />
                                 ))
                             : null

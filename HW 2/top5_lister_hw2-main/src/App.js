@@ -129,6 +129,10 @@ class App extends React.Component {
             sessionData: prevState.sessionData
         }))
     }
+    saveItems = () => {
+        this.db.mutationUpdateList(this.state.currentList);
+        this.db.mutationUpdateSessionData(this.state.sessionData);
+    }
     // THIS FUNCTION BEGINS THE PROCESS OF LOADING A LIST FOR EDITING
     loadList = (key) => {
         let newCurrentList = this.db.queryGetList(key);
@@ -185,7 +189,8 @@ class App extends React.Component {
                 <Workspace
                     currentList={this.state.currentList}
                     renameItemCallback={this.renameItem}
-                    reorderItems={this.reorderItems} />
+                    reorderItemsCallback={this.reorderItems}
+                    saveItemsCallback={this.saveItems} />
                 <Statusbar 
                     currentList={this.state.currentList} />
                 <DeleteModal

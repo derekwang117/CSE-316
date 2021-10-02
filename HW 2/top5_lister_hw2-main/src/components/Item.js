@@ -36,7 +36,10 @@ export default class Item extends React.Component {
         this.props.dragStartGetter(event.target.id.slice(5) - 1);
     }
     handleDragEnter = (event) => {
-        this.props.dragEnterGetter(event.target.id.slice(5) - 1);
+        this.props.dragEnterGetter(event);
+    }
+    handleDragEnd = (event) => {
+        this.props.dragEndGetter(event);
     }
 
     render() {
@@ -60,17 +63,34 @@ export default class Item extends React.Component {
                 )
         }
         else {
-            return (
-                <div
-                    id={"item-" + (this.props.index+1)}
-                    className={"top5-item"}
-                    onClick={this.handleClick}
-                    draggable={true}
-                    onDragStart={this.handleDragStart}
-                    onDragEnter={this.handleDragEnter}
-                    >
-                    {this.props.name}
-                </div>)
+            if (this.props.dragActive && this.props.index === this.props.draggedIndex) {
+                return (
+                    <div
+                        id={"item-" + (this.props.index+1)}
+                        className={"top5-item-dragged-to"}
+                        onClick={this.handleClick}
+                        draggable={true}
+                        onDragStart={this.handleDragStart}
+                        onDragEnter={this.handleDragEnter}
+                        onDragEnd={this.handleDragEnd}
+                        >
+                        {this.props.name}
+                    </div>)
+            }
+            else {
+                return (
+                    <div
+                        id={"item-" + (this.props.index+1)}
+                        className={"top5-item"}
+                        onClick={this.handleClick}
+                        draggable={true}
+                        onDragStart={this.handleDragStart}
+                        onDragEnter={this.handleDragEnter}
+                        onDragEnd={this.handleDragEnd}
+                        >
+                        {this.props.name}
+                    </div>)
+            }
         }
     }
 }
