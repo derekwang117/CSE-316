@@ -5,12 +5,14 @@ export default class Workspace extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            draggedIndex : 0,
-            dragActive: false
+            draggerIndex : null,
+            draggedIndex : null,
+            dragActive : false
         }
     }
     dragStartGetter = (index) => {
         this.setState({
+            draggerIndex: index,
             draggedIndex: index,
             dragActive: true
         })
@@ -32,11 +34,13 @@ export default class Workspace extends React.Component {
             draggedIndex: prevState.draggedIndex,
             dragActive: false
         }))
+        this.props.reorderItemsCallback(this.state.draggedIndex, this.state.draggerIndex);
+        this.props.addReorderItemsTransactionCallback(this.state.draggerIndex, this.state.draggedIndex);
         this.props.saveItemsCallback();
     }
     render() {
         const { currentList,
-                renameItemCallback} = this.props;
+            addRenameItemTransactionCallback} = this.props;
         return (
             <div id="top5-workspace">
                 <div id="workspace-edit">
@@ -55,7 +59,7 @@ export default class Workspace extends React.Component {
                                     name={name}
                                     index={index}
                                     key={index}
-                                    renameItemCallback={renameItemCallback}
+                                    addRenameItemTransactionCallback={addRenameItemTransactionCallback}
                                     dragStartGetter={this.dragStartGetter}
                                     dragEnterGetter={this.dragEnterGetter}
                                     draggedIndex={this.state.draggedIndex}

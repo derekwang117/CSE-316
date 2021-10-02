@@ -29,7 +29,7 @@ export default class Item extends React.Component {
         let index = this.props.index;
         let textValue = this.state.name;
         console.log("Item handleBlur: " + textValue);
-        this.props.renameItemCallback(index, textValue);
+        this.props.addRenameItemTransactionCallback(index, this.props.name, textValue);
         this.handleToggleEdit();
     }
     handleDragStart = (event) => {

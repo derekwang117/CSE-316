@@ -13,6 +13,8 @@ import Statusbar from './components/Statusbar.js'
 
 // TPS
 import jsTPS from './jsTPS.js'
+import ChangeItem_Transaction from './transactions/ChangeItem_Transaction';
+import MoveItem_Transaction from './transactions/MoveItem_Transaction';
 
 class App extends React.Component {
     constructor(props) {
@@ -29,6 +31,9 @@ class App extends React.Component {
             currentList : null,
             sessionData : loadedSessionData
         }
+
+        // use jsTPS to manage transaction stack
+        this.tps = new jsTPS();
     }
     sortKeyNamePairsByName = (keyNamePairs) => {
         keyNamePairs.sort((keyPair1, keyPair2) => {
@@ -108,6 +113,12 @@ class App extends React.Component {
             this.db.mutationUpdateSessionData(this.state.sessionData);
         });
     }
+    addRenameItemTransaction = (index, oldName, newName) => {
+        if (oldName !== newName) {
+            let transaction = new ChangeItem_Transaction(this, index, oldName, newName);
+            this.tps.addTransaction(transaction);
+        }
+    }
     // D: Edit item name
     renameItem = (index, newName) => {
         let newList = this.state.currentList;
@@ -129,6 +140,12 @@ class App extends React.Component {
             currentList: newList,
             sessionData: prevState.sessionData
         }));
+    }
+    addReorderItemsTransaction = (oldIndex, newIndex) => {
+        if (oldIndex !== newIndex) {
+            let transaction = new MoveItem_Transaction(this, oldIndex, newIndex);
+            this.tps.addTransaction(transaction);
+        }
     }
     saveItems = () => {
         this.db.mutationUpdateList(this.state.currentList);
@@ -204,12 +221,29 @@ class App extends React.Component {
             this.db.mutationUpdateSessionData(this.state.sessionData);
         });
     }
+    // undo
+    undo = () => {
+        if (this.tps.hasTransactionToUndo()) {
+            this.tps.undoTransaction();
+            this.saveItems();
+        }
+    }
+    // redo
+    redo = () => {
+        if (this.tps.hasTransactionToRedo()) {
+            this.tps.doTransaction();
+            this.saveItems();
+        }
+    }
+
     render() {
         return (
             <div id="app-root">
                 <Banner 
                     title='Top 5 Lister'
-                    closeCallback={this.closeCurrentList} />
+                    closeCallback={this.closeCurrentList}
+                    undoCallback={this.undo}
+                    redoCallback={this.redo} />
                 <Sidebar
                     heading='Your Lists'
                     currentList={this.state.currentList}
@@ -221,8 +255,9 @@ class App extends React.Component {
                 />
                 <Workspace
                     currentList={this.state.currentList}
-                    renameItemCallback={this.renameItem}
+                    addRenameItemTransactionCallback={this.addRenameItemTransaction}
                     reorderItemsCallback={this.reorderItems}
+                    addReorderItemsTransactionCallback={this.addReorderItemsTransaction}
                     saveItemsCallback={this.saveItems} />
                 <Statusbar 
                     currentList={this.state.currentList} />

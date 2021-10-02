@@ -1,4 +1,4 @@
-import jsTPS_Transaction from "../../common/jsTPS.js"
+import jsTPS_Transaction from "../jsTPS.js"
 
 /**
  * MoveItem_Transaction
@@ -10,18 +10,18 @@ import jsTPS_Transaction from "../../common/jsTPS.js"
  * @author ?
  */
 export default class MoveItem_Transaction extends jsTPS_Transaction {
-    constructor(initModel, initOld, initNew) {
+    constructor(app, initOld, initNew) {
         super();
-        this.model = initModel;
+        this.app = app;
         this.oldItemIndex = initOld;
         this.newItemIndex = initNew;
     }
 
     doTransaction() {
-        this.model.moveItem(this.oldItemIndex, this.newItemIndex);
+        this.app.reorderItems(this.oldItemIndex, this.newItemIndex);
     }
     
     undoTransaction() {
-        this.model.moveItem(this.newItemIndex, this.oldItemIndex);
+        this.app.reorderItems(this.newItemIndex, this.oldItemIndex);
     }
 }
