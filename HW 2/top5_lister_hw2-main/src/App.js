@@ -171,13 +171,15 @@ class App extends React.Component {
     }
     // THIS FUNCTION BEGINS THE PROCESS OF CLOSING THE CURRENT LIST
     closeCurrentList = () => {
+        this.tps.clearAllTransactions()
+
         this.setState(prevState => ({
             currentList: null,
             listKeyPairMarkedForDeletion: prevState.listKeyPairMarkedForDeletion,
             sessionData: this.state.sessionData
         }), () => {
             // ANY AFTER EFFECTS?
-            this.tps.clearAllTransactions()
+            // need to clear transaction stack first because wrong info gets sent too fast
         });
     }
     deleteList = (keyPair) => {
@@ -215,7 +217,7 @@ class App extends React.Component {
 
         let keyPairDelete = this.state.listKeyPairMarkedForDeletion;
 
-        if (this.state.currentList.key === keyPairDelete.key) {
+        if (this.state.currentList && this.state.currentList.key === keyPairDelete.key) {
             this.closeCurrentList()
         }
 
