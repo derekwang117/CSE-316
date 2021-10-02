@@ -72,6 +72,7 @@ class App extends React.Component {
             // PUTTING THIS NEW LIST IN PERMANENT STORAGE
             // IS AN AFTER EFFECT
             this.db.mutationCreateList(newList);
+            this.db.mutationUpdateSessionData(this.state.sessionData);
         });
     }
     renameList = (key, newName) => {
@@ -127,7 +128,7 @@ class App extends React.Component {
         this.setState(prevState => ({
             currentList: newList,
             sessionData: prevState.sessionData
-        }))
+        }));
     }
     saveItems = () => {
         this.db.mutationUpdateList(this.state.currentList);
@@ -172,9 +173,36 @@ class App extends React.Component {
         modal.classList.add("is-visible");
     }
     // THIS FUNCTION IS FOR HIDING THE MODAL
-    hideDeleteListModal() {
+    hideDeleteListModal = () => {
         let modal = document.getElementById("delete-modal");
         modal.classList.remove("is-visible");
+        this.setState(prevState => ({
+            currentList: prevState.currentList,
+            listKeyPairMarkedForDeletion: null,
+            sessionData: prevState.sessionData
+        }))
+    }
+    // actually delete it
+    confirmDeleteListModal = () => {
+        let modal = document.getElementById("delete-modal");
+        modal.classList.remove("is-visible");
+
+        let keyPairDelete = this.state.listKeyPairMarkedForDeletion;
+        
+        let newKeyNamePairs = [...this.state.sessionData.keyNamePairs];
+        newKeyNamePairs.splice(newKeyNamePairs.indexOf(keyPairDelete), 1);
+        this.sortKeyNamePairsByName(newKeyNamePairs);
+
+        this.setState(prevState => ({
+            currentList: prevState.currentList,
+            sessionData: {
+                nextKey: prevState.sessionData.nextKey,
+                counter: prevState.sessionData.counter,
+                keyNamePairs: newKeyNamePairs
+            }
+        }), () => {
+            this.db.mutationUpdateSessionData(this.state.sessionData);
+        });
     }
     render() {
         return (
@@ -201,6 +229,7 @@ class App extends React.Component {
                 <DeleteModal
                     listKeyPair={this.state.listKeyPairMarkedForDeletion}
                     hideDeleteListModalCallback={this.hideDeleteListModal}
+                    confirmDeleteListModalCallback={this.confirmDeleteListModal}
                 />
             </div>
         );
