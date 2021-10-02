@@ -172,6 +172,7 @@ class App extends React.Component {
             sessionData: this.state.sessionData
         }), () => {
             // ANY AFTER EFFECTS?
+            this.tps.clearAllTransactions()
         });
     }
     deleteList = (keyPair) => {
@@ -208,6 +209,10 @@ class App extends React.Component {
         modal.classList.remove("is-visible");
 
         let keyPairDelete = this.state.listKeyPairMarkedForDeletion;
+
+        if (this.state.currentList.key === keyPairDelete.key) {
+            this.closeCurrentList()
+        }
         
         let newKeyNamePairs = [...this.state.sessionData.keyNamePairs];
         newKeyNamePairs.splice(newKeyNamePairs.indexOf(keyPairDelete), 1);
