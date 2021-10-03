@@ -158,7 +158,9 @@ class App extends React.Component {
     }
     // THIS FUNCTION BEGINS THE PROCESS OF LOADING A LIST FOR EDITING
     loadList = (key) => {
-        this.tps.clearAllTransactions();
+        if (this.state.currentList && this.state.currentList.key !== key) {
+            this.tps.clearAllTransactions();
+        }
         
         let newCurrentList = this.db.queryGetList(key);
         this.setState(prevState => ({
