@@ -20,7 +20,9 @@ export const GlobalStoreActionType = {
     SET_CURRENT_LIST: "SET_CURRENT_LIST",
     SET_LIST_NAME_EDIT_ACTIVE: "SET_LIST_NAME_EDIT_ACTIVE",
     ADD_NEW_LIST: "ADD_NEW_LIST",
-    SET_ITEM_EDIT_ACTIVE: "SET_ITEM_EDIT_ACTIVE"
+    SET_ITEM_EDIT_ACTIVE: "SET_ITEM_EDIT_ACTIVE",
+    MARK_LIST: "MARK_LIST",
+    FINISH_DELETING_LIST: "FINISH_DELETING_LIST"
 }
 
 // WE'LL NEED THIS TO PROCESS TRANSACTIONS
@@ -116,6 +118,26 @@ export const useGlobalStore = () => {
                     idNamePairs: store.idNamePairs,
                     currentList: payload,
                     newListCounter: store.newListCounter + 1,
+                    isListNameEditActive: false,
+                    isItemEditActive: false,
+                    listMarkedForDeletion: null
+                })
+            }
+            case GlobalStoreActionType.MARK_LIST: {
+                return setStore({
+                    idNamePairs: store.idNamePairs,
+                    currentList: payload,
+                    newListCounter: store.newListCounter,
+                    isListNameEditActive: false,
+                    isItemEditActive: false,
+                    listMarkedForDeletion: payload
+                })
+            }
+            case GlobalStoreActionType.FINISH_DELETING_LIST: {
+                return setStore({
+                    idNamePairs: payload,
+                    currentList: null,
+                    newListCounter: store.newListCounter,
                     isListNameEditActive: false,
                     isItemEditActive: false,
                     listMarkedForDeletion: null
@@ -313,6 +335,58 @@ export const useGlobalStore = () => {
             }
         }
         asyncAddNewList();
+    }
+
+    store.markListForDeletion = function (id) {
+        // get list
+        async function asyncMarkList(id) {
+            let response = await api.getTop5ListById(id);
+            if (response.data.success) {
+                let top5List = response.data.top5List;
+
+                let modal = document.getElementById("delete-modal");
+                modal.classList.add("is-visible");
+
+                storeReducer({
+                    type: GlobalStoreActionType.MARK_LIST,
+                    payload: top5List
+                })
+            }
+        }
+        asyncMarkList(id)
+    }
+    
+    store.deleteMarkedList = function () {
+        let top5list = store.listMarkedForDeletion;
+
+        async function asyncDeleteMarkedList(list) {
+            let response = await api.deleteTop5ListById(list._id);
+            if (response.data.success) {
+                response = await api.getTop5ListPairs();
+                if (response.data.success) {
+                    let pairsArray = response.data.idNamePairs;
+
+                    let modal = document.getElementById("delete-modal");
+                    modal.classList.remove("is-visible");
+
+                    storeReducer({
+                        type: GlobalStoreActionType.FINISH_DELETING_LIST,
+                        payload: pairsArray
+                    });
+                }
+            }
+        }
+        asyncDeleteMarkedList(top5list)
+    }
+
+    store.hideDeleteListModal = function () {
+        let modal = document.getElementById("delete-modal");
+        modal.classList.remove("is-visible");
+
+        storeReducer({
+            type: GlobalStoreActionType.CLOSE_CURRENT_LIST,
+            payload: {}
+        });
     }
 
     // THIS GIVES OUR STORE AND ITS REDUCER TO ANY COMPONENT THAT NEEDS IT
