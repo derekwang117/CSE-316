@@ -2,6 +2,7 @@ import { createContext, useState } from 'react'
 import jsTPS from '../common/jsTPS'
 import api from '../api'
 import MoveItem_Transaction from '../transactions/MoveItem_Transaction'
+import ChangeItem_Transaction from '../transactions/ChangeItem_Transaction'
 export const GlobalStoreContext = createContext({});
 /*
     This is our global data store. Note that it uses the Flux design pattern,
@@ -18,7 +19,8 @@ export const GlobalStoreActionType = {
     LOAD_ID_NAME_PAIRS: "LOAD_ID_NAME_PAIRS",
     SET_CURRENT_LIST: "SET_CURRENT_LIST",
     SET_LIST_NAME_EDIT_ACTIVE: "SET_LIST_NAME_EDIT_ACTIVE",
-    ADD_NEW_LIST: "ADD_NEW_LIST"
+    ADD_NEW_LIST: "ADD_NEW_LIST",
+    SET_ITEM_EDIT_ACTIVE: "SET_ITEM_EDIT_ACTIVE"
 }
 
 // WE'LL NEED THIS TO PROCESS TRANSACTIONS
@@ -97,12 +99,23 @@ export const useGlobalStore = () => {
                     listMarkedForDeletion: null
                 });
             }
+            // D: START EDITING An item NAME
+            case GlobalStoreActionType.SET_ITEM_EDIT_ACTIVE: {
+                return setStore({
+                    idNamePairs: store.idNamePairs,
+                    currentList: payload,
+                    newListCounter: store.newListCounter,
+                    isListNameEditActive: false,
+                    isItemEditActive: true,
+                    listMarkedForDeletion: null
+                });
+            }
             // D: add new list
             case GlobalStoreActionType.ADD_NEW_LIST: {
                 return setStore({
                     idNamePairs: store.idNamePairs,
                     currentList: payload,
-                    newListCounter: store.newListCounter,
+                    newListCounter: store.newListCounter + 1,
                     isListNameEditActive: false,
                     isItemEditActive: false,
                     listMarkedForDeletion: null
@@ -118,6 +131,10 @@ export const useGlobalStore = () => {
 
     // THIS FUNCTION PROCESSES CHANGING A LIST NAME
     store.changeListName = function (id, newName) {
+        // D: change newName to empty space if empty to avoid crashing
+        if (newName === "") {
+            newName = " "
+        }
         // GET THE LIST
         async function asyncChangeListName(id) {
             let response = await api.getTop5ListById(id);
@@ -201,6 +218,11 @@ export const useGlobalStore = () => {
         let transaction = new MoveItem_Transaction(store, start, end);
         tps.addTransaction(transaction);
     }
+    // change item transaction
+    store.addChangeItemTransaction = function (index, text) {
+        let transaction = new ChangeItem_Transaction(store, index, text);
+        tps.addTransaction(transaction);
+    }
     store.moveItem = function (start, end) {
         start -= 1;
         end -= 1;
@@ -220,6 +242,12 @@ export const useGlobalStore = () => {
         }
 
         // NOW MAKE IT OFFICIAL
+        store.updateCurrentList();
+    }
+    // D: change item text
+    store.changeItem = function (index, text) {
+        store.currentList.items[index] = text;
+
         store.updateCurrentList();
     }
     store.updateCurrentList = function() {
@@ -249,11 +277,19 @@ export const useGlobalStore = () => {
         });
     }
 
-    // D:
+    // D: enables process editing item
+    store.setIsItemEditActive = function () {
+        storeReducer({
+            type: GlobalStoreActionType.SET_ITEM_EDIT_ACTIVE,
+            payload: store.currentList
+        })
+    }
+
+    // D: add list
     store.addNewList = function () {
         async function asyncAddNewList() {
             let newTop5List = {
-                "name": "Untitled",
+                "name": "Untitled" + store.newListCounter,
                 "items": [
                     "?",
                     "?",

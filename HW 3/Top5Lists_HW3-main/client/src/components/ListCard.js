@@ -11,9 +11,10 @@ import { GlobalStoreContext } from '../store'
 function ListCard(props) {
     const { store } = useContext(GlobalStoreContext);
     const [ editActive, setEditActive ] = useState(false);
-    const [ text, setText ] = useState("");
+    // moved so that text can start with its name
     store.history = useHistory();
     const { idNamePair, selected } = props;
+    const [ text, setText ] = useState(idNamePair.name);
 
     function handleLoadList(event) {
         if (!event.target.disabled) {
@@ -45,6 +46,12 @@ function ListCard(props) {
             store.changeListName(id, text);
             toggleEdit();
         }
+    }
+
+    function handleBlur(event) {
+        let id = event.target.id.substring("list-".length);
+            store.changeListName(id, text);
+            toggleEdit();
     }
 
     function handleUpdateText(event) {
@@ -95,8 +102,10 @@ function ListCard(props) {
                 className='list-card'
                 type='text'
                 onKeyPress={handleKeyPress}
+                onBlur={handleBlur}
                 onChange={handleUpdateText}
                 defaultValue={idNamePair.name}
+                autoFocus
             />;
     }
     return (
