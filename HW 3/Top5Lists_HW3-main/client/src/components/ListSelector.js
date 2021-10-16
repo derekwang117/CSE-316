@@ -28,8 +28,14 @@ const ListSelector = () => {
     }
 
     function handleAddList() {
-        store.addNewList();
+        if (store.canAdd()) {
+            store.addNewList();
+        }
     }
+
+    // McKenna way pog
+    let addButtonClass = "top5-button-disabled";
+    if (store.canAdd()) addButtonClass = "top5-button";
 
     return (
         <div id="top5-list-selector">
@@ -37,7 +43,7 @@ const ListSelector = () => {
                 <input
                     type="button"
                     id="add-list-button"
-                    className="top5-button"
+                    className={addButtonClass}
                     value="+"
                     onClick={handleAddList} />
                 Your Lists

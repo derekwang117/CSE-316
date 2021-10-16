@@ -17,14 +17,16 @@ function ListCard(props) {
     const [ text, setText ] = useState(idNamePair.name);
 
     function handleLoadList(event) {
-        if (!event.target.disabled) {
-            let _id = event.target.id;
-            if (_id.indexOf('list-card-text-') >= 0)
-                _id = ("" + _id).substring("list-card-text-".length);
-
-            // CHANGE THE CURRENT LIST
-            store.setCurrentList(_id);
-        }
+        setTimeout(() => {
+            if (!event.target.disabled && !cardStatus) {
+                let _id = event.target.id;
+                if (_id.indexOf('list-card-text-') >= 0)
+                    _id = ("" + _id).substring("list-card-text-".length);
+    
+                // CHANGE THE CURRENT LIST
+                store.setCurrentList(_id);
+            }
+        }, 200);
     }
 
     function handleToggleEdit(event) {
@@ -49,9 +51,11 @@ function ListCard(props) {
     }
 
     function handleBlur(event) {
-        let id = event.target.id.substring("list-".length);
-        store.changeListName(id, text);
-        toggleEdit();
+        setTimeout(() => {
+            let id = event.target.id.substring("list-".length);
+            store.changeListName(id, text);
+            toggleEdit();
+        }, 200);
     }
 
     function handleUpdateText(event) {

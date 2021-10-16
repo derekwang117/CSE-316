@@ -126,7 +126,7 @@ export const useGlobalStore = () => {
             case GlobalStoreActionType.MARK_LIST: {
                 return setStore({
                     idNamePairs: store.idNamePairs,
-                    currentList: payload,
+                    currentList: null,
                     newListCounter: store.newListCounter,
                     isListNameEditActive: false,
                     isItemEditActive: false,
@@ -404,6 +404,10 @@ export const useGlobalStore = () => {
     }
     store.canClose = function () {
         return store.currentList;
+    }
+    
+    store.canAdd = function() {
+        return !store.isListNameEditActive;
     }
 
     // THIS GIVES OUR STORE AND ITS REDUCER TO ANY COMPONENT THAT NEEDS IT
