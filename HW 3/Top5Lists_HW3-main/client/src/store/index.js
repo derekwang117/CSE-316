@@ -240,13 +240,17 @@ export const useGlobalStore = () => {
         asyncSetCurrentList(id);
     }
     store.addMoveItemTransaction = function (start, end) {
-        let transaction = new MoveItem_Transaction(store, start, end);
-        tps.addTransaction(transaction);
+        if (start !== end) {
+            let transaction = new MoveItem_Transaction(store, start, end);
+            tps.addTransaction(transaction);
+        }
     }
     // change item transaction
     store.addChangeItemTransaction = function (index, text) {
-        let transaction = new ChangeItem_Transaction(store, index, text);
-        tps.addTransaction(transaction);
+        if (store.currentList.items[index] !== text) {
+            let transaction = new ChangeItem_Transaction(store, index, text);
+            tps.addTransaction(transaction);
+        }
     }
     store.moveItem = function (start, end) {
         start -= 1;
@@ -390,6 +394,16 @@ export const useGlobalStore = () => {
             type: GlobalStoreActionType.CLOSE_CURRENT_LIST,
             payload: {}
         });
+    }
+
+    store.canUndo = function () {
+        return tps.hasTransactionToUndo();
+    }
+    store.canRedo = function () {
+        return tps.hasTransactionToRedo();
+    }
+    store.canClose = function () {
+        return store.currentList;
     }
 
     // THIS GIVES OUR STORE AND ITS REDUCER TO ANY COMPONENT THAT NEEDS IT
