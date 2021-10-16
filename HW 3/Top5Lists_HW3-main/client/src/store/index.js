@@ -50,7 +50,7 @@ export const useGlobalStore = () => {
             case GlobalStoreActionType.CHANGE_LIST_NAME: {
                 return setStore({
                     idNamePairs: payload.idNamePairs,
-                    currentList: payload.top5List,
+                    currentList: null, //payload.top5List, why is this the default action i swapped it
                     newListCounter: store.newListCounter,
                     isListNameEditActive: false,
                     isItemEditActive: false,
