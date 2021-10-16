@@ -66,9 +66,9 @@ function Top5Item(props) {
         }
     }
 
-    function handleBlur(event) {
+    /*function handleBlur(event) {
         toggleEdit();
-    }
+    }*/
 
     function handleUpdateText(event) {
         setText(event.target.value );
@@ -92,6 +92,7 @@ function Top5Item(props) {
             draggable="true"
         >
             <input
+                disabled={store.canItemEdit()}
                 type="button"
                 id={"edit-item-" + index + 1}
                 className="list-card-button"
@@ -108,7 +109,7 @@ function Top5Item(props) {
                 className='top5-item'
                 type='text'
                 onKeyPress={handleKeyPress}
-                onBlur={handleBlur}
+                // onBlur={handleBlur} it pains me so
                 onChange={handleUpdateText}
                 defaultValue={text}
                 autoFocus

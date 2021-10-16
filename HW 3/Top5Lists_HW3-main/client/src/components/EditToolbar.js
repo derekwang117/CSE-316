@@ -15,44 +15,46 @@ function EditToolbar() {
     let undoButtonClass = "top5-button-disabled";
     let redoButtonClass = "top5-button-disabled";
     let closeButtonClass = "top5-button-disabled";
-    if (store.canUndo()) undoButtonClass = "top5-button";
-    if (store.canRedo()) redoButtonClass = "top5-button";
-    if (store.canClose()) closeButtonClass = "top5-button";
+    if (store.canUndo() && store.canToolBar()) undoButtonClass = "top5-button";
+    if (store.canRedo() && store.canToolBar()) redoButtonClass = "top5-button";
+    if (store.canClose() && store.canToolBar()) closeButtonClass = "top5-button";
 
     //let enabledButtonClass = "top5-button";
     
     function handleUndo() {
-        store.undo();
+        if (store.canUndo() && store.canToolBar()) {
+            store.undo();
+        }
     }
     function handleRedo() {
-        store.redo();
+        if (store.canRedo() && store.canToolBar()) {
+            store.redo();
+        }
     }
     function handleClose() {
-        history.push("/");
-        store.closeCurrentList();
-    }
-    let editStatus = false;
-    if (store.isListNameEditActive) {
-        editStatus = true;
+        if (store.canClose() && store.canToolBar()) {
+            history.push("/");
+            store.closeCurrentList();
+        }
     }
     return (
         <div id="edit-toolbar">
             <div
-                disabled={editStatus}
+                disabled={store.canToolBar()}
                 id='undo-button'
                 onClick={handleUndo}
                 className={undoButtonClass}>
                 &#x21B6;
             </div>
             <div
-                disabled={editStatus}
+                disabled={store.canToolBar()}
                 id='redo-button'
                 onClick={handleRedo}
                 className={redoButtonClass}>
                 &#x21B7;
             </div>
             <div
-                disabled={editStatus}
+                disabled={store.canToolBar()}
                 id='close-button'
                 onClick={handleClose}
                 className={closeButtonClass}>

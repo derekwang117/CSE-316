@@ -251,6 +251,9 @@ export const useGlobalStore = () => {
             let transaction = new ChangeItem_Transaction(store, index, text);
             tps.addTransaction(transaction);
         }
+        else {
+            store.updateCurrentList();
+        }
     }
     store.moveItem = function (start, end) {
         start -= 1;
@@ -408,6 +411,12 @@ export const useGlobalStore = () => {
     
     store.canAdd = function() {
         return !store.isListNameEditActive;
+    }
+    store.canItemEdit = function() {
+        return store.isItemEditActive;
+    }
+    store.canToolBar = function() {
+        return !(store.isListNameEditActive || store.isItemEditActive);
     }
 
     // THIS GIVES OUR STORE AND ITS REDUCER TO ANY COMPONENT THAT NEEDS IT
