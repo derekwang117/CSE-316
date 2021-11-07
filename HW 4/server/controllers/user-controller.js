@@ -26,19 +26,22 @@ login = async (req, res) => {
         }
 
         const existingUser = await User.findOne({ email: email });
-
-        bcrypt.compare(password, existingUser.passwordHash, function (err, res) {
-            if (!res) {
+        if (!existingUser) {
+            return res
+                .status(400)
+                .json({ errorMessage: "wrong email." })
+        }
+        console.log("test1 ========================================================================")
+        bcrypt.compare(password, existingUser.passwordHash, function (err, result) {
+            console.log("test2 ========================================================================")
+            if (!result) {
+                console.log("test3 ========================================================================")
                 return res
                     .status(400)
-                    .json({
-                        success: false,
-                        errorMessage: "wrong password."
-                    })
+                    .json({ errorMessage: "wrong password." });
             }
-        
-        });
-
+        })
+        console.log("test4 ========================================================================")
         // LOGIN THE USER
         const token = auth.signToken(existingUser);
 
@@ -54,7 +57,7 @@ login = async (req, res) => {
                 email: existingUser.email
             }
         }).send();
-        
+        console.log("test5 ========================================================================")
     } catch (err) {
         console.error(err);
         res.status(500).send();

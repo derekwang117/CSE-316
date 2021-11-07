@@ -13,6 +13,11 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
+import { styled } from "@mui/system";
+import ModalUnstyled from "@mui/core/ModalUnstyled";
+import Alert from "@mui/material/Alert";
+import AlertTitle from "@mui/material/AlertTitle";
+
 import { useContext } from 'react';
 
 import AuthContext from '../auth'
@@ -37,6 +42,15 @@ export default function SignInSide() {
     const { auth } = useContext(AuthContext);
     const { store } = useContext(GlobalStoreContext)
 
+    const handleClose = () => {
+        auth.closeModal()
+    }
+    
+    let openStatus = false
+    if (auth.error) {
+        openStatus = true
+    }
+
     const handleSubmit = (event) => {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
@@ -46,10 +60,47 @@ export default function SignInSide() {
         }, store);
     };
 
+    const StyledModal = styled(ModalUnstyled)`
+        position: fixed;
+        z-index: 1300;
+        right: 0;
+        bottom: 0;
+        top: 0;
+        left: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        `;
+
+    const Backdrop = styled("div")`
+        z-index: -1;
+        position: fixed;
+        right: 0;
+        bottom: 0;
+        top: 0;
+        left: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        -webkit-tap-highlight-color: transparent;
+        `;
+
+    let modal = (
+            <StyledModal
+                open={openStatus}
+                onClose={handleClose}
+                BackdropComponent={Backdrop}
+            >
+                <Alert severity="error">
+                    <AlertTitle>Error</AlertTitle>
+                    {auth.error}
+                </Alert>
+            </StyledModal>
+    )
+
     return (
         <ThemeProvider theme={theme}>
             <Grid container component="main" sx={{ height: '100vh' }}>
                 <CssBaseline />
+                {modal}
                 <Grid
                     item
                     xs={false}
@@ -114,11 +165,7 @@ export default function SignInSide() {
                                 Sign In
                             </Button>
                             <Grid container>
-                                <Grid item xs>
-                                    <Link href="#" variant="body2">
-                                        Forgot password?
-                                    </Link>
-                                </Grid>
+                                
                                 <Grid item>
                                     <Link href="/register/" variant="body2">
                                         {"Don't have an account? Sign Up"}

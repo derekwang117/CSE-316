@@ -13,9 +13,23 @@ import Typography from '@mui/material/Typography';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { GlobalStoreContext } from '../store'
 
+import { styled } from "@mui/system";
+import ModalUnstyled from "@mui/core/ModalUnstyled";
+import Alert from "@mui/material/Alert";
+import AlertTitle from "@mui/material/AlertTitle";
+
 export default function RegisterScreen() {
     const { auth } = useContext(AuthContext);
     const { store } = useContext(GlobalStoreContext)
+
+    const handleClose = () => {
+        auth.closeModal()
+    }
+
+    let openStatus = false
+    if (auth.error) {
+        openStatus = true
+    }
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -29,9 +43,46 @@ export default function RegisterScreen() {
         }, store);
     };
 
+    const StyledModal = styled(ModalUnstyled)`
+        position: fixed;
+        z-index: 1300;
+        right: 0;
+        bottom: 0;
+        top: 0;
+        left: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        `;
+
+    const Backdrop = styled("div")`
+        z-index: -1;
+        position: fixed;
+        right: 0;
+        bottom: 0;
+        top: 0;
+        left: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        -webkit-tap-highlight-color: transparent;
+        `;
+
+    let modal = (
+            <StyledModal
+                open={openStatus}
+                onClose={handleClose}
+                BackdropComponent={Backdrop}
+            >
+                <Alert severity="error">
+                    <AlertTitle>Error</AlertTitle>
+                    {auth.error}
+                </Alert>
+            </StyledModal>
+    )
+
     return (
         <Container component="main" maxWidth="xs">
             <CssBaseline />
+            {modal}
             <Box
                 sx={{
                     marginTop: 8,
