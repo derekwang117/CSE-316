@@ -84,6 +84,11 @@ export default function AppBanner() {
         return <AccountCircle />;
     }
 
+    let menuIcon = getAccountMenu(auth.loggedIn)
+    if (auth.user) {
+        menuIcon = auth.user.firstName.charAt(0) + auth.user.lastName.charAt(0)
+    }
+
     return (
         <Box sx={{ flexGrow: 1 }}>
             <AppBar position="static">
@@ -107,7 +112,7 @@ export default function AppBanner() {
                             onClick={handleProfileMenuOpen}
                             color="inherit"
                         >
-                            { getAccountMenu(auth.loggedIn) }
+                            { menuIcon }
                         </IconButton>
                     </Box>
                 </Toolbar>
