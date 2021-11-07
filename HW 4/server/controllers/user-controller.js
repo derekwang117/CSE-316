@@ -31,33 +31,30 @@ login = async (req, res) => {
                 .status(400)
                 .json({ errorMessage: "wrong email." })
         }
-        console.log("test1 ========================================================================")
         bcrypt.compare(password, existingUser.passwordHash, function (err, result) {
-            console.log("test2 ========================================================================")
             if (!result) {
-                console.log("test3 ========================================================================")
                 return res
                     .status(400)
                     .json({ errorMessage: "wrong password." });
             }
-        })
-        console.log("test4 ========================================================================")
-        // LOGIN THE USER
-        const token = auth.signToken(existingUser);
+            else {
+                // LOGIN THE USER
+                const token = auth.signToken(existingUser);
 
-        await res.cookie("token", token, {
-            httpOnly: true,
-            secure: true,
-            sameSite: "none"
-        }).status(200).json({
-            success: true,
-            user: {
-                firstName: existingUser.firstName,
-                lastName: existingUser.lastName,
-                email: existingUser.email
+                return res.cookie("token", token, {
+                    httpOnly: true,
+                    secure: true,
+                    sameSite: "none"
+                }).status(200).json({
+                    success: true,
+                    user: {
+                        firstName: existingUser.firstName,
+                        lastName: existingUser.lastName,
+                        email: existingUser.email
+                    }
+                }).send();
             }
-        }).send();
-        console.log("test5 ========================================================================")
+        })
     } catch (err) {
         console.error(err);
         res.status(500).send();

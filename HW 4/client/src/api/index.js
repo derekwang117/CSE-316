@@ -36,10 +36,8 @@ export const registerUser = (payload) => api.post(`/register/`, payload).then(re
     return error.response
 })
 export const loginUser = (payload) => api.post(`/login/`, payload).then(response => {
-    console.log("received response")
     return response
 }).catch(error => {
-    console.log("received error")
     return error.response
 })
 export const logoutUser = () => api.get(`/logout/`)
