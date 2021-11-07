@@ -86,6 +86,7 @@ export default function RegisterScreen() {
                     <AlertTitle>Error</AlertTitle>
                     {auth.error}
                 </Alert>
+                <Button variant="contained" onClick={handleClose}>Close</Button>
             </Box>
         </StyledModal>
     )

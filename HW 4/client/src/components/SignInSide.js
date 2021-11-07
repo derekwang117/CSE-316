@@ -103,6 +103,7 @@ export default function SignInSide() {
                     <AlertTitle>Error</AlertTitle>
                     {auth.error}
                 </Alert>
+                <Button variant="contained" onClick={handleClose}>Close</Button>
             </Box>
         </StyledModal>
     )
