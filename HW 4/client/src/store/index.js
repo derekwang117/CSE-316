@@ -172,7 +172,10 @@ function GlobalStoreContextProvider(props) {
                 response = await api.updateTop5ListById(top5List._id, top5List);
                 if (response.data.success) {
                     async function getListPairs(top5List) {
-                        response = await api.getTop5ListPairs();
+                        let payload = {
+                            ownerEmail: auth.user.email
+                        };
+                        response = await api.getTop5ListPairs(payload);
                         if (response.data.success) {
                             let pairsArray = response.data.idNamePairs;
                             storeReducer({
@@ -197,7 +200,6 @@ function GlobalStoreContextProvider(props) {
             type: GlobalStoreActionType.CLOSE_CURRENT_LIST,
             payload: {}
         });
-        
         tps.clearAllTransactions();
         history.push("/");
     }
@@ -230,7 +232,10 @@ function GlobalStoreContextProvider(props) {
 
     // THIS FUNCTION LOADS ALL THE ID, NAME PAIRS SO WE CAN LIST ALL THE LISTS
     store.loadIdNamePairs = async function () {
-        const response = await api.getTop5ListPairs();
+        let payload = {
+            ownerEmail: auth.user.email
+        };
+        const response = await api.getTop5ListPairs(payload);
         if (response.data.success) {
             let pairsArray = response.data.idNamePairs;
             storeReducer({
@@ -283,19 +288,34 @@ function GlobalStoreContextProvider(props) {
     // FUNCTIONS ARE setCurrentList, addMoveItemTransaction, addUpdateItemTransaction,
     // moveItem, updateItem, updateCurrentList, undo, and redo
     store.setCurrentList = async function (id) {
-        let response = await api.getTop5ListById(id);
-        if (response.data.success) {
-            let top5List = response.data.top5List;
+        if (auth.user) {
+            let email = {
+                ownerEmail: auth.user.email
+            }
 
-            response = await api.updateTop5ListById(top5List._id, top5List);
+            let response = await api.getTop5ListById(id, email);
             if (response.data.success) {
-                storeReducer({
-                    type: GlobalStoreActionType.SET_CURRENT_LIST,
-                    payload: top5List
-                });
-                history.push("/top5list/" + top5List._id);
+                let top5List = response.data.top5List;
+
+                response = await api.updateTop5ListById(top5List._id, top5List);
+                if (response.data.success) {
+                    storeReducer({
+                        type: GlobalStoreActionType.SET_CURRENT_LIST,
+                        payload: top5List
+                    });
+                    history.push("/top5list/" + top5List._id);
+                }
+            }
+            else {
+                console.log("haxor")
             }
         }
+    }
+
+    let id = document.URL.substring(21)
+    if (id.length > 10 && (store.currentList === null || id.substring(10) !== store.currentList._id)) {
+        id = id.substring(10)
+        store.setCurrentList(id);
     }
 
     store.addMoveItemTransaction = function (start, end) {
@@ -354,11 +374,11 @@ function GlobalStoreContextProvider(props) {
         tps.doTransaction();
     }
 
-    store.canUndo = function() {
+    store.canUndo = function () {
         return tps.hasTransactionToUndo();
     }
 
-    store.canRedo = function() {
+    store.canRedo = function () {
         return tps.hasTransactionToRedo();
     }
 

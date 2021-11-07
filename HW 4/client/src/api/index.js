@@ -24,10 +24,10 @@ const api = axios.create({
 // CUSTOM FILTERS FOR QUERIES
 export const createTop5List = (payload) => api.post(`/top5list/`, payload)
 export const getAllTop5Lists = () => api.get(`/top5lists/`)
-export const getTop5ListPairs = () => api.get(`/top5listpairs/`)
+export const getTop5ListPairs = (payload) => api.post(`/top5listpairs/`, payload)
 export const updateTop5ListById = (id, payload) => api.put(`/top5list/${id}`, payload)
 export const deleteTop5ListById = (id) => api.delete(`/top5list/${id}`)
-export const getTop5ListById = (id) => api.get(`/top5list/${id}`)
+export const getTop5ListById = (id, email) => api.post(`/top5list/${id}`, email)
 
 export const getLoggedIn = () => api.get(`/loggedIn/`).then(response => {
     return response
