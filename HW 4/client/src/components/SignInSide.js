@@ -45,7 +45,7 @@ export default function SignInSide() {
     const handleClose = () => {
         auth.closeModal()
     }
-    
+
     let openStatus = false
     if (auth.error) {
         openStatus = true
@@ -83,17 +83,28 @@ export default function SignInSide() {
         -webkit-tap-highlight-color: transparent;
         `;
 
+    const style = {
+        width: 400,
+        bgcolor: 'background.paper',
+        border: '2px solid #000',
+        p: 2,
+        px: 4,
+        pb: 3,
+    };
+
     let modal = (
-            <StyledModal
-                open={openStatus}
-                onClose={handleClose}
-                BackdropComponent={Backdrop}
-            >
+        <StyledModal
+            open={openStatus}
+            onClose={handleClose}
+            BackdropComponent={Backdrop}
+        >
+            <Box sx={style}>
                 <Alert severity="error">
                     <AlertTitle>Error</AlertTitle>
                     {auth.error}
                 </Alert>
-            </StyledModal>
+            </Box>
+        </StyledModal>
     )
 
     return (
@@ -165,7 +176,7 @@ export default function SignInSide() {
                                 Sign In
                             </Button>
                             <Grid container>
-                                
+
                                 <Grid item>
                                     <Link href="/register/" variant="body2">
                                         {"Don't have an account? Sign Up"}

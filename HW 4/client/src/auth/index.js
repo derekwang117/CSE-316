@@ -11,7 +11,8 @@ export const AuthActionType = {
     REGISTER_USER: "REGISTER_USER",
     LOG_IN: "LOG_IN",
     LOG_IN_ERROR: "LOG_IN_ERROR",
-    CLOSE_MODAL: "CLOSE_MODAL"
+    CLOSE_MODAL: "CLOSE_MODAL",
+    GET_LOGGED_OUT: "GET_LOGGED_OUT"
 }
 
 function AuthContextProvider(props) {
@@ -64,6 +65,13 @@ function AuthContextProvider(props) {
                     error: ""
                 })
             }
+            case AuthActionType.GET_LOGGED_OUT: {
+                return setAuth({
+                    user: null,
+                    loggedIn: false,
+                    error: ""
+                })
+            }
             default:
                 return auth;
         }
@@ -77,6 +85,14 @@ function AuthContextProvider(props) {
                 payload: {
                     loggedIn: response.data.loggedIn,
                     user: response.data.user
+                }
+            });
+        }
+        else if (response.status === 401) {
+            authReducer({
+                type: AuthActionType.GET_LOGGED_OUT,
+                payload: {
+
                 }
             });
         }
@@ -130,6 +146,18 @@ function AuthContextProvider(props) {
                 type: AuthActionType.LOG_IN_ERROR,
                 payload: {
                     error: response.data.errorMessage
+                }
+            })
+        }
+    }
+
+    auth.logoutUser = async function (userData, store) {
+        const response = await api.logoutUser()
+        if (response.status === 200) {
+            authReducer({
+                type: AuthActionType.GET_LOGGED_OUT,
+                payload: {
+
                 }
             })
         }

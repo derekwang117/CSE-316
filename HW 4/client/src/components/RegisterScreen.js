@@ -66,17 +66,28 @@ export default function RegisterScreen() {
         -webkit-tap-highlight-color: transparent;
         `;
 
+    const style = {
+        width: 400,
+        bgcolor: 'background.paper',
+        border: '2px solid #000',
+        p: 2,
+        px: 4,
+        pb: 3,
+    };
+
     let modal = (
-            <StyledModal
-                open={openStatus}
-                onClose={handleClose}
-                BackdropComponent={Backdrop}
-            >
+        <StyledModal
+            open={openStatus}
+            onClose={handleClose}
+            BackdropComponent={Backdrop}
+        >
+            <Box sx={style}>
                 <Alert severity="error">
                     <AlertTitle>Error</AlertTitle>
                     {auth.error}
                 </Alert>
-            </StyledModal>
+            </Box>
+        </StyledModal>
     )
 
     return (
