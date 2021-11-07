@@ -97,7 +97,6 @@ getTop5ListById = async (req, res) => {
             return res.status(200).json({ success: true, top5List: list })
         }
         else {
-            console.log(list.ownerEmail + " " + email)
             return res.status(200).json({ success: false, top5List: null})
         }
     }).catch(err => console.log(err))
