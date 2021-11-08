@@ -48,9 +48,7 @@ function ListCard(props) {
     function handleKeyPress(event) {
         if (event.code === "Enter") {
             let id = event.target.id.substring("list-".length);
-            if (text !== "") {
-                store.changeListName(id, text);
-            }
+            store.changeListName(id, text);
             toggleEdit();
         }
     }
@@ -60,6 +58,7 @@ function ListCard(props) {
 
     let cardElement =
         <ListItem
+            disabled = {store.isListNameEditActive}
             id={idNamePair._id}
             key={idNamePair._id}
             sx={{ marginTop: '15px', display: 'flex', p: 1 }}
@@ -73,19 +72,19 @@ function ListCard(props) {
                 width: '100%'
             }}
         >
-                <Box sx={{ p: 1, flexGrow: 1 }}>{idNamePair.name}</Box>
-                <Box sx={{ p: 1 }}>
-                    <IconButton onClick={handleToggleEdit} aria-label='edit'>
-                        <EditIcon style={{fontSize:'48pt'}} />
-                    </IconButton>
-                </Box>
-                <Box sx={{ p: 1 }}>
-                    <IconButton onClick={(event) => {
-                        handleDeleteList(event, idNamePair._id)
-                    }} aria-label='delete'>
-                        <DeleteIcon style={{fontSize:'48pt'}} />
-                    </IconButton>
-                </Box>
+            <Box sx={{ p: 1, flexGrow: 1 }}>{idNamePair.name}</Box>
+            <Box sx={{ p: 1 }}>
+                <IconButton onClick={handleToggleEdit} aria-label='edit'>
+                    <EditIcon style={{ fontSize: '48pt' }} />
+                </IconButton>
+            </Box>
+            <Box sx={{ p: 1 }}>
+                <IconButton onClick={(event) => {
+                    handleDeleteList(event, idNamePair._id)
+                }} aria-label='delete'>
+                    <DeleteIcon style={{ fontSize: '48pt' }} />
+                </IconButton>
+            </Box>
         </ListItem>
 
     if (editActive) {
@@ -102,8 +101,8 @@ function ListCard(props) {
                 onKeyPress={handleKeyPress}
                 onChange={handleUpdateText}
                 defaultValue={idNamePair.name}
-                inputProps={{style: {fontSize: 48}}}
-                InputLabelProps={{style: {fontSize: 24}}}
+                inputProps={{ style: { fontSize: 48 } }}
+                InputLabelProps={{ style: { fontSize: 24 } }}
                 autoFocus
             />
     }

@@ -45,7 +45,7 @@ function Top5Item(props) {
 
         console.log("handleDrop (sourceId, targetId): ( " + sourceId + ", " + targetId + ")");
 
-        // UPDATE THE LIST
+        // UPDATE THE LIST (supposed to be !=, not !==)
         if (sourceId != targetId) {
             store.addMoveItemTransaction(sourceId, targetId);
         }
@@ -74,9 +74,7 @@ function Top5Item(props) {
     function handleKeyPress(event) {
         if (event.code === "Enter") {
             let id = event.target.id.substring("edit-item-".length);
-            if (text !== "" && props.text !== text) {
-                store.addUpdateItemTransaction(id - 1, text)
-            }
+            store.addUpdateItemTransaction(id - 1, text)
             toggleEdit();
         }
     }
@@ -86,6 +84,7 @@ function Top5Item(props) {
 
     let top5itemCard = (
         <ListItem
+            disabled = {store.isItemEditActive}
             id={'item-' + (index + 1)}
             key={props.key}
             className={itemClass}
@@ -104,7 +103,7 @@ function Top5Item(props) {
             onDrop={(event) => {
                 handleDrop(event, (index + 1))
             }}
-            draggable="true"
+            draggable= {!store.isItemEditActive}
             sx={{ display: 'flex', p: 1 }}
             style={{
                 fontSize: '48pt',
@@ -112,7 +111,7 @@ function Top5Item(props) {
             }}
         >
             <Box sx={{ p: 1 }}>
-                <IconButton onClick={handleToggleEdit} aria-label='edit'>
+                <IconButton onClick={handleToggleEdit} aria-label='edit' disabled = {store.isItemEditActive}>
                     <EditIcon style={{ fontSize: '48pt' }} />
                 </IconButton>
             </Box>

@@ -82,6 +82,7 @@ const HomeScreen = () => {
             {modal}
             <div id="list-selector-heading">
                 <Fab
+                    disabled={store.isListNameEditActive}
                     color="primary"
                     aria-label="add"
                     id="add-list-button"

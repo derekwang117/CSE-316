@@ -58,7 +58,7 @@ function GlobalStoreContextProvider(props) {
             case GlobalStoreActionType.CHANGE_LIST_NAME: {
                 return setStore({
                     idNamePairs: payload.idNamePairs,
-                    currentList: payload.top5List,
+                    currentList: null,
                     newListCounter: store.newListCounter,
                     isListNameEditActive: false,
                     isItemEditActive: false,
@@ -164,36 +164,40 @@ function GlobalStoreContextProvider(props) {
 
     // THIS FUNCTION PROCESSES CHANGING A LIST NAME
     store.changeListName = async function (id, newName) {
-        let email = {
-            ownerEmail: auth.user.email
-        }
-        let response = await api.getTop5ListById(id, email);
-        if (response.data.success) {
-            let top5List = response.data.top5List;
-            top5List.name = newName;
-            async function updateList(top5List) {
-                response = await api.updateTop5ListById(top5List._id, top5List);
-                if (response.data.success) {
-                    async function getListPairs(top5List) {
-                        let payload = {
-                            ownerEmail: auth.user.email
-                        };
-                        response = await api.getTop5ListPairs(payload);
-                        if (response.data.success) {
-                            let pairsArray = response.data.idNamePairs;
-                            storeReducer({
-                                type: GlobalStoreActionType.CHANGE_LIST_NAME,
-                                payload: {
-                                    idNamePairs: pairsArray,
-                                    top5List: top5List
-                                }
-                            });
-                        }
-                    }
-                    getListPairs(top5List);
-                }
+        if (newName) {
+            let email = {
+                ownerEmail: auth.user.email
             }
-            updateList(top5List);
+            let response = await api.getTop5ListById(id, email);
+            if (response.data.success) {
+                let top5List = response.data.top5List;
+                top5List.name = newName;
+                async function updateList(top5List) {
+                    response = await api.updateTop5ListById(top5List._id, top5List);
+                    if (response.data.success) {
+                        async function getListPairs(top5List) {
+                            let payload = {
+                                ownerEmail: auth.user.email
+                            };
+                            response = await api.getTop5ListPairs(payload);
+                            if (response.data.success) {
+                                let pairsArray = response.data.idNamePairs;
+                                storeReducer({
+                                    type: GlobalStoreActionType.CHANGE_LIST_NAME,
+                                    payload: {
+                                        idNamePairs: pairsArray
+                                    }
+                                });
+                            }
+                        }
+                        getListPairs(top5List);
+                    }
+                }
+                updateList(top5List);
+            }
+        }
+        else {
+            store.closeCurrentList();
         }
     }
 
@@ -331,7 +335,12 @@ function GlobalStoreContextProvider(props) {
     store.addUpdateItemTransaction = function (index, newText) {
         let oldText = store.currentList.items[index];
         let transaction = new UpdateItem_Transaction(store, index, oldText, newText);
-        tps.addTransaction(transaction);
+        if (newText && oldText !== newText) {
+            tps.addTransaction(transaction);
+        }
+        else {
+            store.updateCurrentList();
+        }
     }
 
     store.moveItem = function (start, end) {
