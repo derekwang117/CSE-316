@@ -93,7 +93,7 @@ getTop5ListById = async (req, res) => {
         if (err) {
             return res.status(400).json({ success: false, error: err });
         }
-        if (list.ownerEmail === email) {
+        if (list && list.ownerEmail === email) {
             return res.status(200).json({ success: true, top5List: list })
         }
         else {

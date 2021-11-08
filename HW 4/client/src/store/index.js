@@ -164,7 +164,10 @@ function GlobalStoreContextProvider(props) {
 
     // THIS FUNCTION PROCESSES CHANGING A LIST NAME
     store.changeListName = async function (id, newName) {
-        let response = await api.getTop5ListById(id);
+        let email = {
+            ownerEmail: auth.user.email
+        }
+        let response = await api.getTop5ListById(id, email);
         if (response.data.success) {
             let top5List = response.data.top5List;
             top5List.name = newName;
@@ -254,7 +257,10 @@ function GlobalStoreContextProvider(props) {
     // showDeleteListModal, and hideDeleteListModal
     store.markListForDeletion = async function (id) {
         // GET THE LIST
-        let response = await api.getTop5ListById(id);
+        let email = {
+            ownerEmail: auth.user.email
+        }
+        let response = await api.getTop5ListById(id, email);
         if (response.data.success) {
             let top5List = response.data.top5List;
             storeReducer({
@@ -292,7 +298,6 @@ function GlobalStoreContextProvider(props) {
             let email = {
                 ownerEmail: auth.user.email
             }
-
             let response = await api.getTop5ListById(id, email);
             if (response.data.success) {
                 let top5List = response.data.top5List;
