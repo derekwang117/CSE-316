@@ -8,9 +8,10 @@ getLoggedIn = async (req, res) => {
         return res.status(200).json({
             loggedIn: true,
             user: {
-                firstName: loggedInUser.firstName,
-                lastName: loggedInUser.lastName,
-                email: loggedInUser.email
+                firstName: savedUser.firstName,
+                lastName: savedUser.lastName,
+                email: savedUser.email,
+                userName: savedUser.userName
             }
         }).send();
     })
@@ -18,18 +19,21 @@ getLoggedIn = async (req, res) => {
 
 login = async (req, res) => {
     try {
-        const { email, password } = req.body;
-        if (!email || !password) {
+        const { email, userName, password } = req.body;
+        if (!email || !userName || !password) {
             return res
                 .status(400)
                 .json({ errorMessage: "Please enter all required fields." });
         }
 
-        const existingUser = await User.findOne({ email: email });
+        let existingUser = await User.findOne({ email: email });
         if (!existingUser) {
-            return res
-                .status(400)
-                .json({ errorMessage: "wrong email." })
+            existingUser = await User.findOne({ userName: userName })
+            if (!existingUser) {
+                return res
+                    .status(400)
+                    .json({ errorMessage: "wrong email or username." })
+            }
         }
         bcrypt.compare(password, existingUser.passwordHash, function (err, result) {
             if (!result) {
@@ -50,7 +54,8 @@ login = async (req, res) => {
                     user: {
                         firstName: existingUser.firstName,
                         lastName: existingUser.lastName,
-                        email: existingUser.email
+                        email: existingUser.email,
+                        userName: existingUser.userName
                     }
                 }).send();
             }
@@ -63,8 +68,8 @@ login = async (req, res) => {
 
 registerUser = async (req, res) => {
     try {
-        const { firstName, lastName, email, password, passwordVerify } = req.body;
-        if (!firstName || !lastName || !email || !password || !passwordVerify) {
+        const { firstName, lastName, email, userName, password, passwordVerify } = req.body;
+        if (!firstName || !lastName || !email || !userName || !password || !passwordVerify) {
             return res
                 .status(400)
                 .json({ errorMessage: "Please enter all required fields." });
@@ -83,7 +88,7 @@ registerUser = async (req, res) => {
                     errorMessage: "Please enter the same password twice."
                 })
         }
-        const existingUser = await User.findOne({ email: email });
+        let existingUser = await User.findOne({ email: email });
         if (existingUser) {
             return res
                 .status(400)
@@ -92,13 +97,22 @@ registerUser = async (req, res) => {
                     errorMessage: "An account with this email address already exists."
                 })
         }
+        existingUser = await User.findOne({ userName: userName });
+        if (existingUser) {
+            return res
+                .status(400)
+                .json({
+                    success: false,
+                    errorMessage: "An account with this username already exists."
+                })
+        }
 
         const saltRounds = 10;
         const salt = await bcrypt.genSalt(saltRounds);
         const passwordHash = await bcrypt.hash(password, salt);
 
         const newUser = new User({
-            firstName, lastName, email, passwordHash
+            firstName, lastName, email, userName, passwordHash
         });
         const savedUser = await newUser.save();
 
@@ -114,7 +128,8 @@ registerUser = async (req, res) => {
             user: {
                 firstName: savedUser.firstName,
                 lastName: savedUser.lastName,
-                email: savedUser.email
+                email: savedUser.email,
+                userName: savedUser.userName
             }
         }).send();
     } catch (err) {
@@ -131,8 +146,10 @@ getLogout = async (req, res) => {
             user: {
                 firstName: null,
                 lastName: null,
-                email: null
-            }})
+                email: null,
+                userName: null
+            }
+        })
     } catch (err) {
         console.error(err);
         res.status(500).send();
