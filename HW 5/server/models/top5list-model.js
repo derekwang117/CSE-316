@@ -12,7 +12,6 @@ const Top5ListSchema = new Schema(
         views: { type: Number },
         upvote: { type: [String] },
         downvote: { type: [String] },
-        dateMade: { type: Date },
         communityListRanking: { type: [Object] }
     },
     { timestamps: true },

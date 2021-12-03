@@ -51,8 +51,51 @@ updateTop5List = async (req, res) => {
             })
         }
 
+        // community list stuff
+        // if we are now publishing the top5List, make community list if doesnt exist
+        if (body.isPublished && !top5List.isPublished) {
+            Top5List.findOne({ name: top5List.name, isCommunityList: true }, (err, communityList) => {
+                if (err) {
+                    let communityList = new Top5List({
+                        isCommunityList: true,
+                        isPublished: true,
+                        name: top5List.name,
+                        items: [],
+                        comments: [],
+                        views: [],
+                        upvote: [],
+                        downvote: [],
+                        communityListRanking: []
+                    });
+                }
+            })
+
+            for (let i = 0; i < 5; i++) {
+                let element = communityList.communityListRanking.find(element => element.name === body.items[i])
+                // if this is a new element
+                if (!element) {
+                    communityList.communityListRanking.append({name: body.items[i], score: 5-i})
+                }
+                else {
+                    element = element.score + 5-i
+                }
+            }
+
+            communityList.communityListRanking.sort((a,b) => (b.score > a.score) ? 1 : (a.score > b.score) ? -1: 0)
+            for (let i = 0; i < 5; i++) {
+                communityList.items[i] = communityList.communityListRanking[i].name
+            }
+
+            communityList.save()
+        }
+
         top5List.name = body.name
         top5List.items = body.items
+        top5List.isPublished = body.isPublished
+        top5List.comments = body.comments
+        top5List.views = body.views
+        top5List.upvote = body.upvote
+        top5List.downvote = body.downvote
         top5List
             .save()
             .then(() => {
@@ -97,7 +140,7 @@ getTop5ListById = async (req, res) => {
             return res.status(200).json({ success: true, top5List: list })
         }
         else {
-            return res.status(200).json({ success: false, top5List: null})
+            return res.status(200).json({ success: false, top5List: null })
         }
     }).catch(err => console.log(err))
 }
