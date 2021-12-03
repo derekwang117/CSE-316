@@ -165,10 +165,10 @@ function GlobalStoreContextProvider(props) {
     // THIS FUNCTION PROCESSES CHANGING A LIST NAME
     store.changeListName = async function (id, newName) {
         if (newName) {
-            let email = {
-                ownerEmail: auth.user.email
+            let loginName = {
+                loginName: auth.user.loginName
             }
-            let response = await api.getTop5ListById(id, email);
+            let response = await api.getTop5ListById(id, loginName);
             if (response.data.success) {
                 let top5List = response.data.top5List;
                 top5List.name = newName;
@@ -177,7 +177,7 @@ function GlobalStoreContextProvider(props) {
                     if (response.data.success) {
                         async function getListPairs(top5List) {
                             let payload = {
-                                ownerEmail: auth.user.email
+                                loginName: auth.user.loginName
                             };
                             response = await api.getTop5ListPairs(payload);
                             if (response.data.success) {
@@ -215,9 +215,15 @@ function GlobalStoreContextProvider(props) {
     store.createNewList = async function () {
         let newListName = "Untitled" + store.newListCounter;
         let payload = {
+            isCommunityList: false,
+            isPublished: false,
             name: newListName,
             items: ["?", "?", "?", "?", "?"],
-            ownerEmail: auth.user.email
+            loginName: auth.user.loginName,
+            comments: [],
+            views: 0,
+            upvote: [],
+            downvote: []
         };
         const response = await api.createTop5List(payload);
         if (response.data.success) {
@@ -240,7 +246,7 @@ function GlobalStoreContextProvider(props) {
     // THIS FUNCTION LOADS ALL THE ID, NAME PAIRS SO WE CAN LIST ALL THE LISTS
     store.loadIdNamePairs = async function () {
         let payload = {
-            ownerEmail: auth.user.email
+            loginName: auth.user.loginName
         };
         const response = await api.getTop5ListPairs(payload);
         if (response.data.success) {
@@ -261,10 +267,10 @@ function GlobalStoreContextProvider(props) {
     // showDeleteListModal, and hideDeleteListModal
     store.markListForDeletion = async function (id) {
         // GET THE LIST
-        let email = {
-            ownerEmail: auth.user.email
+        let loginName = {
+            loginName: auth.user.loginName
         }
-        let response = await api.getTop5ListById(id, email);
+        let response = await api.getTop5ListById(id, loginName);
         if (response.data.success) {
             let top5List = response.data.top5List;
             storeReducer({
@@ -299,10 +305,10 @@ function GlobalStoreContextProvider(props) {
     // moveItem, updateItem, updateCurrentList, undo, and redo
     store.setCurrentList = async function (id) {
         if (auth.user) {
-            let email = {
-                ownerEmail: auth.user.email
+            let loginName = {
+                loginName: auth.user.loginName
             }
-            let response = await api.getTop5ListById(id, email);
+            let response = await api.getTop5ListById(id, loginName);
             if (response.data.success) {
                 let top5List = response.data.top5List;
 
@@ -414,7 +420,7 @@ function GlobalStoreContextProvider(props) {
 
     store.publishList = async function (id) {
         let userName = {
-            ownerUserName: auth.user.userName
+            userName: auth.user.userName
         }
         let response = await api.getTop5ListById(id, userName);
         if (response.data.success) {
@@ -424,6 +430,52 @@ function GlobalStoreContextProvider(props) {
                 response = await api.updateTop5ListById(top5List._id, top5List);
                 if (response.data.success) {
                     // changeListName refreshes list view but i  dont think i need to do that
+                }
+            }
+            updateList(top5List)
+        }
+    }
+
+    store.newComment = async function (id, comment) {
+        let payload = {
+            userName: auth.user.userName
+        }
+        let response = await api.getTop5ListById(id, payload);
+        if (response.data.success) {
+            let top5List = response.data.top5List;
+            top5List.comments.append({ userName: auth.user.userName, comment: comment })
+            async function updateList(top5List) {
+                response = await api.updateTop5ListById(top5List._id, top5List);
+                if (response.data.success) {
+
+                }
+            }
+            updateList(top5List)
+        }
+    }
+
+    store.vote = async function (id, vote) {
+        let payload = {
+            userName: auth.user.userName
+        }
+        let response = await api.getTop5ListById(id, payload);
+        if (response.data.success) {
+            let top5List = response.data.top5List;
+
+            top5List.upvote = top5List.upvote.filter(name => name !== auth.user.userName)
+            top5List.downvote = top5List.downvote.filter(name => name !== auth.user.userName)
+
+            if (vote === 1) {
+                top5List.upvote.append(auth.user.userName)
+            }
+            else if (vote === -1) {
+                top5List.downvote.append(auth.user.userName)
+            }
+
+            async function updateList(top5List) {
+                response = await api.updateTop5ListById(top5List._id, top5List);
+                if (response.data.success) {
+
                 }
             }
             updateList(top5List)
