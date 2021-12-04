@@ -218,7 +218,7 @@ function GlobalStoreContextProvider(props) {
             isCommunityList: false,
             isPublished: false,
             name: newListName,
-            items: ["?", "?", "?", "?", "?"],
+            items: ["", "", "", "", ""],
             loginName: auth.user.loginName,
             comments: [],
             views: 0,
@@ -419,7 +419,7 @@ function GlobalStoreContextProvider(props) {
     }
 
     store.publishList = async function () {
-        if (new Set(store.currentList.items).size === 5) {
+        if (new Set(store.currentList.items).size === 5 && store.currentList.items.includes("")) {
             let payload = {
                 userName: auth.user.userName
             }

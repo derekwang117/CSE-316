@@ -1,8 +1,6 @@
 import React, { useContext, useEffect } from 'react'
 import { GlobalStoreContext } from '../store'
 import ListCard from './ListCard.js'
-import { Fab, Typography } from '@mui/material'
-import AddIcon from '@mui/icons-material/Add';
 import List from '@mui/material/List';
 
 import Box from '@mui/material/Box';
@@ -10,6 +8,8 @@ import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
 import Alert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
+
+import ViewBanner from './ViewBanner.js'
 
 /*
     This React component lists all the top5 lists in the UI.
@@ -23,9 +23,6 @@ const HomeScreen = () => {
         store.loadIdNamePairs();
     }, []);
 
-    function handleCreateNewList() {
-        store.createNewList();
-    }
     let listCard = "";
     if (store) {
         listCard =
@@ -59,6 +56,8 @@ const HomeScreen = () => {
         name = store.listMarkedForDeletion.name
     }
 
+    let viewBanner = < ViewBanner />
+
     let modal = (
         <div>
             <Modal
@@ -78,24 +77,15 @@ const HomeScreen = () => {
     )
 
     return (
-        <div id="top5-list-selector">
-            {modal}
-            <div id="list-selector-heading">
-                <Fab
-                    disabled={store.isListNameEditActive}
-                    color="primary"
-                    aria-label="add"
-                    id="add-list-button"
-                    onClick={handleCreateNewList}
-                >
-                    <AddIcon />
-                </Fab>
-                <Typography variant="h2">Your Lists</Typography>
-            </div>
-            <div id="list-selector-list">
-                {
-                    listCard
-                }
+        <div>
+            {viewBanner}
+            <div id="top5-list-selector">
+                {modal}
+                <div id="list-selector-list">
+                    {
+                        listCard
+                    }
+                </div>
             </div>
         </div>)
 }

@@ -92,7 +92,7 @@ export default function AppBanner() {
 
     return (
         <Box sx={{ flexGrow: 1 }}>
-            <AppBar position="static" style={{background: "black"}}>
+            <AppBar position="static" style={{background: "#e0e0e0"}}>
                 <Toolbar>
                     <Typography                        
                         variant="h4"
@@ -100,7 +100,7 @@ export default function AppBanner() {
                         component="div"
                         sx={{ display: { xs: 'none', sm: 'block' } }}                        
                     >
-                        <Link style={{ textDecoration: 'none', color: 'white' }} to='/'>T<sup>5</sup>L</Link>
+                        <Link style={{ textDecoration: 'none', color: '#d98813' }} to='/'>T<sup>5</sup>L</Link>
                     </Typography>
                     <Box sx={{ flexGrow: 1 }}>{editToolbar}</Box>
                     <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
