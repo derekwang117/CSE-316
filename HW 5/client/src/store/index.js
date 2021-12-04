@@ -418,21 +418,27 @@ function GlobalStoreContextProvider(props) {
         });
     }
 
-    store.publishList = async function (id) {
-        let userName = {
-            userName: auth.user.userName
-        }
-        let response = await api.getTop5ListById(id, userName);
-        if (response.data.success) {
-            let top5List = response.data.top5List;
-            top5List.isPublished = true;
-            async function updateList(top5List) {
-                response = await api.updateTop5ListById(top5List._id, top5List);
-                if (response.data.success) {
-                    // changeListName refreshes list view but i  dont think i need to do that
-                }
+    store.publishList = async function () {
+        if (new Set(store.currentList.items).size === 5) {
+            let payload = {
+                userName: auth.user.userName
             }
-            updateList(top5List)
+            let id = store.currentList._id
+            let response = await api.getTop5ListById(id, payload);
+            if (response.data.success) {
+                let top5List = response.data.top5List;
+                top5List.isPublished = true;
+                async function updateList(top5List) {
+                    response = await api.updateTop5ListById(top5List._id, top5List);
+                    if (response.data.success) {
+                        // changeListName refreshes list view but i  dont think i need to do that
+                    }
+                }
+                updateList(top5List)
+            }
+        }
+        else {
+            console.log("Needs 5 unique items")
         }
     }
 

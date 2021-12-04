@@ -55,38 +55,38 @@ updateTop5List = async (req, res) => {
         // if we are now publishing the top5List, make community list if doesnt exist
         if (body.isPublished && !top5List.isPublished) {
             Top5List.findOne({ name: top5List.name, isCommunityList: true }, (err, communityList) => {
-                if (err) {
-                    let communityList = new Top5List({
+                if (communityList === null) {
+                    communityList = new Top5List({
                         isCommunityList: true,
                         isPublished: true,
                         name: top5List.name,
                         items: [],
                         comments: [],
-                        views: [],
+                        views: 0,
                         upvote: [],
                         downvote: [],
                         communityListRanking: []
                     });
                 }
+                for (let i = 0; i < 5; i++) {
+                    let element = communityList.communityListRanking.find(element => element.name === body.items[i])
+                    // if this is a new element
+                    if (!element) {
+                        communityList.communityListRanking.push({ name: body.items[i], score: 5 - i })
+                    }
+                    else {
+                        element.score = element.score + 5 - i
+                    }
+                }
+                communityList.communityListRanking.sort((a, b) => (b.score > a.score) ? 1 : (a.score > b.score) ? -1 : 0)
+                let auxList = []
+                for (let i = 0; i < 5; i++) {
+                    auxList.push(communityList.communityListRanking[i].name)
+                }
+                communityList.items = auxList
+
+                communityList.save()
             })
-
-            for (let i = 0; i < 5; i++) {
-                let element = communityList.communityListRanking.find(element => element.name === body.items[i])
-                // if this is a new element
-                if (!element) {
-                    communityList.communityListRanking.append({name: body.items[i], score: 5-i})
-                }
-                else {
-                    element = element.score + 5-i
-                }
-            }
-
-            communityList.communityListRanking.sort((a,b) => (b.score > a.score) ? 1 : (a.score > b.score) ? -1: 0)
-            for (let i = 0; i < 5; i++) {
-                communityList.items[i] = communityList.communityListRanking[i].name
-            }
-
-            communityList.save()
         }
 
         top5List.name = body.name
