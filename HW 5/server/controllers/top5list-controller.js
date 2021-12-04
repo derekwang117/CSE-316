@@ -124,6 +124,23 @@ deleteTop5List = async (req, res) => {
                 message: 'Top 5 List not found!',
             })
         }
+
+        if (top5List.isPublished) {
+            Top5List.findOne({ name: top5List.name, isCommunityList: true }, (err, communityList) => {
+                for (let i = 0; i < 5; i++) {
+                    let element = communityList.communityListRanking.find(element => element.name === top5List.items[i])
+                    element.score = element.score - (5-i);
+                }
+                communityList.communityListRanking.sort((a, b) => (b.score > a.score) ? 1 : (a.score > b.score) ? -1 : 0)
+                let auxList = []
+                for (let i = 0; i < 5; i++) {
+                    auxList.push(communityList.communityListRanking[i].name)
+                }
+                communityList.items = auxList
+
+                communityList.save()
+            })
+        }
         Top5List.findOneAndDelete({ _id: req.params.id }, () => {
             return res.status(200).json({ success: true, data: top5List })
         }).catch(err => console.log(err))
