@@ -44,7 +44,7 @@ function Statusbar() {
 
     let display = createListButton
     if (store.currentList) {
-        display = statusBarName
+        display = null
     }
 
     return (

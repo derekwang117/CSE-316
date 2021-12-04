@@ -58,7 +58,7 @@ function GlobalStoreContextProvider(props) {
             case GlobalStoreActionType.CHANGE_LIST_NAME: {
                 return setStore({
                     idNamePairs: payload.idNamePairs,
-                    currentList: null,
+                    currentList: store.currentList,
                     newListCounter: store.newListCounter,
                     isListNameEditActive: false,
                     isItemEditActive: false,
@@ -419,7 +419,7 @@ function GlobalStoreContextProvider(props) {
     }
 
     store.publishList = async function () {
-        if (new Set(store.currentList.items).size === 5 && store.currentList.items.includes("")) {
+        if (new Set(store.currentList.items).size === 5 && !store.currentList.items.includes("")) {
             let payload = {
                 userName: auth.user.userName
             }

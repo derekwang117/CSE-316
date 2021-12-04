@@ -54,9 +54,9 @@ function Top5Item(props) {
     let { index } = props;
 
     let itemClass = "top5-item";
-    if (draggedTo) {
+    /*if (draggedTo) {
         itemClass = "top5-item-dragged-to";
-    }
+    }*/
 
     function handleToggleEdit(event) {
         event.stopPropagation();
@@ -103,7 +103,7 @@ function Top5Item(props) {
             onDrop={(event) => {
                 handleDrop(event, (index + 1))
             }}
-            draggable= {!store.isItemEditActive}
+            // draggable= {!store.isItemEditActive}
             sx={{ display: 'flex', p: 1 }}
             style={{
                 fontSize: '48pt',
