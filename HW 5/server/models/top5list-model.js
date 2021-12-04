@@ -7,7 +7,7 @@ const Top5ListSchema = new Schema(
         isPublished: { type: Boolean, required: true },
         name: { type: String, required: true },
         items: { type: [String], required: true },
-        loginName: { type: String },
+        userName: { type: String },
         comments: { type: [Object] },
         views: { type: Number },
         upvote: { type: [String] },

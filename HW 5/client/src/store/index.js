@@ -26,7 +26,8 @@ export const GlobalStoreActionType = {
     UNMARK_LIST_FOR_DELETION: "UNMARK_LIST_FOR_DELETION",
     SET_CURRENT_LIST: "SET_CURRENT_LIST",
     SET_ITEM_EDIT_ACTIVE: "SET_ITEM_EDIT_ACTIVE",
-    SET_LIST_NAME_EDIT_ACTIVE: "SET_LIST_NAME_EDIT_ACTIVE"
+    SET_LIST_NAME_EDIT_ACTIVE: "SET_LIST_NAME_EDIT_ACTIVE",
+    PUBLISH_LIST: "PUBLISH_LIST"
 }
 
 // WE'LL NEED THIS TO PROCESS TRANSACTIONS
@@ -58,7 +59,7 @@ function GlobalStoreContextProvider(props) {
             case GlobalStoreActionType.CHANGE_LIST_NAME: {
                 return setStore({
                     idNamePairs: payload.idNamePairs,
-                    currentList: store.currentList,
+                    currentList: payload.currentList,
                     newListCounter: store.newListCounter,
                     isListNameEditActive: false,
                     isItemEditActive: false,
@@ -153,6 +154,17 @@ function GlobalStoreContextProvider(props) {
                     listMarkedForDeletion: null
                 });
             }
+            //publish list
+            case GlobalStoreActionType.PUBLISH_LIST: {
+                return setStore({
+                    idNamePairs: payload.idNamePairs,
+                    currentList: null,
+                    newListCounter: store.newListCounter,
+                    isListNameEditActive: false,
+                    isItemEditActive: false,
+                    listMarkedForDeletion: null
+                })
+            }
             default:
                 return store;
         }
@@ -165,10 +177,10 @@ function GlobalStoreContextProvider(props) {
     // THIS FUNCTION PROCESSES CHANGING A LIST NAME
     store.changeListName = async function (id, newName) {
         if (newName) {
-            let loginName = {
-                loginName: auth.user.loginName
+            let payload = {
+                userName: auth.user.userName
             }
-            let response = await api.getTop5ListById(id, loginName);
+            let response = await api.getTop5ListById(id, payload);
             if (response.data.success) {
                 let top5List = response.data.top5List;
                 top5List.name = newName;
@@ -177,7 +189,7 @@ function GlobalStoreContextProvider(props) {
                     if (response.data.success) {
                         async function getListPairs(top5List) {
                             let payload = {
-                                loginName: auth.user.loginName
+                                userName: auth.user.userName
                             };
                             response = await api.getTop5ListPairs(payload);
                             if (response.data.success) {
@@ -185,7 +197,8 @@ function GlobalStoreContextProvider(props) {
                                 storeReducer({
                                     type: GlobalStoreActionType.CHANGE_LIST_NAME,
                                     payload: {
-                                        idNamePairs: pairsArray
+                                        idNamePairs: pairsArray,
+                                        currentList: top5List
                                     }
                                 });
                             }
@@ -219,7 +232,7 @@ function GlobalStoreContextProvider(props) {
             isPublished: false,
             name: newListName,
             items: ["", "", "", "", ""],
-            loginName: auth.user.loginName,
+            userName: auth.user.userName,
             comments: [],
             views: 0,
             upvote: [],
@@ -246,7 +259,7 @@ function GlobalStoreContextProvider(props) {
     // THIS FUNCTION LOADS ALL THE ID, NAME PAIRS SO WE CAN LIST ALL THE LISTS
     store.loadIdNamePairs = async function () {
         let payload = {
-            loginName: auth.user.loginName
+            userName: auth.user.userName
         };
         const response = await api.getTop5ListPairs(payload);
         if (response.data.success) {
@@ -267,10 +280,10 @@ function GlobalStoreContextProvider(props) {
     // showDeleteListModal, and hideDeleteListModal
     store.markListForDeletion = async function (id) {
         // GET THE LIST
-        let loginName = {
-            loginName: auth.user.loginName
+        let payload = {
+            userName: auth.user.userName
         }
-        let response = await api.getTop5ListById(id, loginName);
+        let response = await api.getTop5ListById(id, payload);
         if (response.data.success) {
             let top5List = response.data.top5List;
             storeReducer({
@@ -305,10 +318,10 @@ function GlobalStoreContextProvider(props) {
     // moveItem, updateItem, updateCurrentList, undo, and redo
     store.setCurrentList = async function (id) {
         if (auth.user) {
-            let loginName = {
-                loginName: auth.user.loginName
+            let payload = {
+                userName: auth.user.userName
             }
-            let response = await api.getTop5ListById(id, loginName);
+            let response = await api.getTop5ListById(id, payload);
             if (response.data.success) {
                 let top5List = response.data.top5List;
 
@@ -418,27 +431,55 @@ function GlobalStoreContextProvider(props) {
         });
     }
 
-    store.publishList = async function () {
-        if (new Set(store.currentList.items).size === 5 && !store.currentList.items.includes("")) {
-            let payload = {
-                userName: auth.user.userName
-            }
-            let id = store.currentList._id
-            let response = await api.getTop5ListById(id, payload);
-            if (response.data.success) {
-                let top5List = response.data.top5List;
-                top5List.isPublished = true;
-                async function updateList(top5List) {
-                    response = await api.updateTop5ListById(top5List._id, top5List);
-                    if (response.data.success) {
-                        // changeListName refreshes list view but i  dont think i need to do that
-                    }
+    store.checkAllowPublish = function () {
+        let checker = true
+        if (new Set(store.currentList.items).size !== 5 || store.currentList.items.includes("")) {
+            checker = false
+        }
+        if (checker) {
+            let listsWithSameName = store.idNamePairs.filter(ele => ele.name === store.currentList.name)
+            for (let i = 0; i < listsWithSameName.length; i++) {
+                if (listsWithSameName[i].isPublished) {
+                    checker = false
                 }
-                updateList(top5List)
             }
         }
-        else {
-            console.log("Needs 5 unique items")
+        return checker
+    }
+
+    store.publishList = async function (top5List) {
+        let payload = {
+            userName: auth.user.userName
+        }
+        let id = top5List._id
+        let response = await api.getTop5ListById(id, payload);
+        if (response.data.success) {
+            let top5List = response.data.top5List;
+            top5List.isPublished = true;
+            async function updateList(top5List) {
+                response = await api.updateTop5ListById(top5List._id, top5List);
+                if (response.data.success) {
+                    async function getListPairs(top5List) {
+                        let payload = {
+                            userName: auth.user.userName
+                        };
+                        response = await api.getTop5ListPairs(payload);
+                        if (response.data.success) {
+                            let pairsArray = response.data.idNamePairs;
+                            storeReducer({
+                                type: GlobalStoreActionType.PUBLISH_LIST,
+                                payload: {
+                                    idNamePairs: pairsArray
+                                }
+                            });
+                            tps.clearAllTransactions();
+                            history.push("/");
+                        }
+                    }
+                    getListPairs(top5List);
+                }
+            }
+            updateList(top5List)
         }
     }
 

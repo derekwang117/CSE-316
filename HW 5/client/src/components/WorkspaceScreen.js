@@ -26,7 +26,7 @@ function WorkspaceScreen() {
         store.closeCurrentList();
     }
     function handlePublish() {
-        store.publishList();
+        store.publishList(store.currentList);
         store.closeCurrentList();
     }
 
@@ -51,6 +51,11 @@ function WorkspaceScreen() {
         }
     }
 
+    function handleBlur() {
+        store.changeListName(store.currentList._id, text);
+        toggleEdit();
+    }
+
     function handleUpdateText(event) {
         setText(event.target.value);
     }
@@ -73,6 +78,31 @@ function WorkspaceScreen() {
 
     let defaultText = store.currentList.name
 
+    let publishAllowed = store.checkAllowPublish()
+
+    let publishButton = (
+        <Button variant="contained" style={{
+            minWidth: '15em', minHeight: '4em',
+            color: "black", backgroundColor: "lightgray",
+            border: "1px solid black"
+        }}
+            onClick={handlePublish}
+            disabled={false}
+        >Publish</Button>
+    )
+    if (!publishAllowed) {
+        publishButton = (
+            <Button variant="contained" style={{
+                minWidth: '15em', minHeight: '4em',
+                color: "gray", backgroundColor: "lightgray",
+                border: "1px solid black"
+            }}
+                onClick={handlePublish}
+                disabled={true}
+            >Publish</Button>
+        )
+    }
+
     return (
         <div id="top5-workspace">
             <Grid item sx={12} sm={6} pl={3} pt={1}>
@@ -86,6 +116,7 @@ function WorkspaceScreen() {
                     className='list-card'
                     onKeyPress={handleKeyPress}
                     onChange={handleUpdateText}
+                    onBlur={handleBlur}
                     defaultValue={defaultText}
                 />
             </Grid>
@@ -99,20 +130,14 @@ function WorkspaceScreen() {
                 </div>
                 {editItems}
                 <Stack spacing={2} direction="row"
-                    style={{marginTop:510, marginLeft:950}}>
+                    style={{ marginTop: 510, marginLeft: 950 }}>
                     <Button variant="contained" style={{
                         minWidth: '15em', minHeight: '4em',
                         color: "black", backgroundColor: "lightgray",
                         border: "1px solid black"
                     }} onClick={handleClose}
                     >Save</Button>
-                    <Button variant="contained" style={{
-                        minWidth: '15em', minHeight: '4em',
-                        color: "black", backgroundColor: "lightgray",
-                        border: "1px solid black"
-                    }}
-                        onClick={handlePublish}
-                    >Publish</Button>
+                    {publishButton}
                 </Stack>
             </div>
         </div>

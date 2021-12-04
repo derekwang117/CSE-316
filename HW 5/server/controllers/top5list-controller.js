@@ -148,12 +148,12 @@ deleteTop5List = async (req, res) => {
 }
 
 getTop5ListById = async (req, res) => {
-    let loginName = req.body.loginName
+    let userName = req.body.userName
     await Top5List.findById({ _id: req.params.id }, (err, list) => {
         if (err) {
             return res.status(400).json({ success: false, error: err });
         }
-        if (list && list.loginName === loginName) {
+        if (list && list.userName === userName) {
             return res.status(200).json({ success: true, top5List: list })
         }
         else {
@@ -176,7 +176,7 @@ getTop5Lists = async (req, res) => {
 }
 getTop5ListPairs = async (req, res) => {
     await Top5List.find({}, (err, top5Lists) => {
-        let loginName = req.body.loginName
+        let userName = req.body.userName
         if (err) {
             return res.status(400).json({ success: false, error: err })
         }
@@ -194,9 +194,14 @@ getTop5ListPairs = async (req, res) => {
                 let pair = {
                     _id: list._id,
                     name: list.name,
-                    loginName: list.loginName
+                    userName: list.userName,
+                    isPublished: list.isPublished,
+                    comments: list.comments,
+                    views: list.views,
+                    upvotes: list.upvotes,
+                    downvotes: list.downvotes
                 };
-                if (loginName === pair.loginName) {
+                if (userName === pair.userName) {
                     pairs.push(pair);
                 }
             }
