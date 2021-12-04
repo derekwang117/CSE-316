@@ -114,7 +114,7 @@ export default function AppBanner() {
                             aria-controls={menuId}
                             aria-haspopup="true"
                             onClick={handleProfileMenuOpen}
-                            sx={{color: "black", border: "1px solid black"}}
+                            sx={{color: "black", border: "1px solid black", backgroundColor: "#d236df"}}
                         >
                             { menuIcon }
                         </IconButton>
