@@ -84,46 +84,61 @@ export default function AppBanner() {
         </Menu>
     );
 
+    let coolColor = "black"
+    let searchColor = "white"
+    if (store.currentList) {
+        coolColor = ""
+        searchColor = "lightgray"
+    }
+
     let viewBar = (
         <Box sx={{ flexGrow: 1 }}>
             <AppBar position="static" style={{ background: "#c4c4c4", boxShadow: "none" }}>
                 <Toolbar>
                     <IconButton
-                        aria-label='home'>
+                        disabled={store.currentList}
+                        aria-label='home'
+                        style={{ color: coolColor }}>
                         <HomeOutlinedIcon style={{ fontSize: '40pt' }} />
                     </IconButton>
                     <IconButton
-                        aria-label='all'>
+                        disabled={store.currentList}
+                        aria-label='all'
+                        style={{ color: coolColor }}>
                         <GroupsOutlinedIcon style={{ fontSize: '40pt' }} />
                     </IconButton>
                     <IconButton
-                        aria-label='users'>
+                        disabled={store.currentList}
+                        aria-label='users'
+                        style={{ color: coolColor }}>
                         <PersonOutlineOutlinedIcon style={{ fontSize: '40pt' }} />
                     </IconButton>
                     <IconButton
-                        aria-label='community'>
+                        disabled={store.currentList}
+                        aria-label='community'
+                        style={{ color: coolColor }}>
                         <FunctionsOutlinedIcon style={{ fontSize: '40pt' }} />
                     </IconButton>
 
                     <Grid item xs={12} sm={6} pl={3}>
                         <TextField
+                            disabled={store.currentList}
                             id="search"
                             label="Search"
                             name="search"
                             fullWidth
-                            sx={{ backgroundColor: "#FFFFFF" }}
+                            sx={{ backgroundColor: searchColor }}
                         />
                     </Grid>
 
                     <Box sx={{ flexGrow: 1 }}>
                     </Box>
 
-                    <Typography
-                        style={{ color: "black", fontSize: '20pt', fontWeight: 'bold' }}>
-                        Sort By
-                    </Typography>
                     <IconButton
-                        aria-label='sort'>
+                        disabled={store.currentList}
+                        aria-label='sort'
+                        style={{ color: coolColor, fontSize: '20pt', fontWeight: 'bold' }}>
+                            SORT BY
                         <SortOutlinedIcon style={{ fontSize: '40pt' }}
                             aria-controls={menuId}
                             aria-haspopup="true"
