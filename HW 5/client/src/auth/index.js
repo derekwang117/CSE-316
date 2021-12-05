@@ -12,7 +12,8 @@ export const AuthActionType = {
     LOG_IN: "LOG_IN",
     LOG_IN_ERROR: "LOG_IN_ERROR",
     CLOSE_MODAL: "CLOSE_MODAL",
-    GET_LOGGED_OUT: "GET_LOGGED_OUT"
+    GET_LOGGED_OUT: "GET_LOGGED_OUT",
+    LOG_AS_GUEST: "LOG_AS_GUEST"
 }
 
 function AuthContextProvider(props) {
@@ -69,6 +70,13 @@ function AuthContextProvider(props) {
                 return setAuth({
                     user: null,
                     loggedIn: false,
+                    error: ""
+                })
+            }
+            case AuthActionType.LOG_AS_GUEST: {
+                return setAuth({
+                    user: null,
+                    loggedIn: true,
                     error: ""
                 })
             }
