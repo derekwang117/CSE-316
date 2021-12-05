@@ -26,13 +26,12 @@ const HomeScreen = () => {
     let listCard = "";
     if (store) {
         listCard =
-            <List sx={{ width: '90%', left: '5%', bgcolor: 'background.paper' }}>
+            <List sx={{ width: '90%', left: '5%' }}>
                 {
                     store.idNamePairs.map((pair) => (
                         <ListCard
                             key={pair._id}
                             idNamePair={pair}
-                            selected={false}
                         />
                     ))
                 }
@@ -80,12 +79,12 @@ const HomeScreen = () => {
         <div>
             {viewBanner}
             <div id="top5-list-selector">
-                {modal}
                 <div id="list-selector-list">
                     {
                         listCard
                     }
                 </div>
+                {modal}
             </div>
         </div>)
 }

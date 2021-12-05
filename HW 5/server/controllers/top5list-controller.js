@@ -63,8 +63,8 @@ updateTop5List = async (req, res) => {
                         items: [],
                         comments: [],
                         views: 0,
-                        upvote: [],
-                        downvote: [],
+                        upvotes: [],
+                        downvotes: [],
                         communityListRanking: []
                     });
                 }
@@ -94,8 +94,8 @@ updateTop5List = async (req, res) => {
         top5List.isPublished = body.isPublished
         top5List.comments = body.comments
         top5List.views = body.views
-        top5List.upvote = body.upvote
-        top5List.downvote = body.downvote
+        top5List.upvotes = body.upvotes
+        top5List.downvotes = body.downvotes
         top5List
             .save()
             .then(() => {
@@ -194,12 +194,15 @@ getTop5ListPairs = async (req, res) => {
                 let pair = {
                     _id: list._id,
                     name: list.name,
+                    items: list.items,
                     userName: list.userName,
                     isPublished: list.isPublished,
                     comments: list.comments,
                     views: list.views,
                     upvotes: list.upvotes,
-                    downvotes: list.downvotes
+                    downvotes: list.downvotes,
+                    createdAt: list.createdAt,
+                    updatedAt: list.updatedAt
                 };
                 if (userName === pair.userName) {
                     pairs.push(pair);

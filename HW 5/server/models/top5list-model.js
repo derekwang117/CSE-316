@@ -10,8 +10,8 @@ const Top5ListSchema = new Schema(
         userName: { type: String },
         comments: { type: [Object] },
         views: { type: Number },
-        upvote: { type: [String] },
-        downvote: { type: [String] },
+        upvotes: { type: [String] },
+        downvotes: { type: [String] },
         communityListRanking: { type: [Object] }
     },
     { timestamps: true },

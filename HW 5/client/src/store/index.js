@@ -235,8 +235,8 @@ function GlobalStoreContextProvider(props) {
             userName: auth.user.userName,
             comments: [],
             views: 0,
-            upvote: [],
-            downvote: []
+            upvotes: [],
+            downvotes: []
         };
         const response = await api.createTop5List(payload);
         if (response.data.success) {
@@ -490,15 +490,36 @@ function GlobalStoreContextProvider(props) {
         let response = await api.getTop5ListById(id, payload);
         if (response.data.success) {
             let top5List = response.data.top5List;
-            top5List.comments.append({ userName: auth.user.userName, comment: comment })
+            top5List.comments.push({ userName: auth.user.userName, comment: comment })
             async function updateList(top5List) {
                 response = await api.updateTop5ListById(top5List._id, top5List);
                 if (response.data.success) {
-
+                    async function getListPairs(top5List) {
+                        let payload = {
+                            userName: auth.user.userName
+                        };
+                        response = await api.getTop5ListPairs(payload);
+                        if (response.data.success) {
+                            let pairsArray = response.data.idNamePairs;
+                            storeReducer({
+                                type: GlobalStoreActionType.PUBLISH_LIST,
+                                payload: {
+                                    idNamePairs: pairsArray
+                                }
+                            });
+                            tps.clearAllTransactions();
+                            history.push("/");
+                        }
+                    }
+                    getListPairs(top5List);
                 }
             }
             updateList(top5List)
         }
+    }
+
+    store.getUserName = function () {
+        return auth.user.userName
     }
 
     store.vote = async function (id, vote) {
@@ -509,20 +530,76 @@ function GlobalStoreContextProvider(props) {
         if (response.data.success) {
             let top5List = response.data.top5List;
 
-            top5List.upvote = top5List.upvote.filter(name => name !== auth.user.userName)
-            top5List.downvote = top5List.downvote.filter(name => name !== auth.user.userName)
+            top5List.upvotes = top5List.upvotes.filter(name => name !== auth.user.userName)
+            top5List.downvotes = top5List.downvotes.filter(name => name !== auth.user.userName)
 
             if (vote === 1) {
-                top5List.upvote.append(auth.user.userName)
+                top5List.upvotes.push(auth.user.userName)
             }
             else if (vote === -1) {
-                top5List.downvote.append(auth.user.userName)
+                top5List.downvotes.push(auth.user.userName)
             }
 
             async function updateList(top5List) {
                 response = await api.updateTop5ListById(top5List._id, top5List);
+                console.log(top5List)
                 if (response.data.success) {
+                    async function getListPairs(top5List) {
+                        let payload = {
+                            userName: auth.user.userName
+                        };
+                        response = await api.getTop5ListPairs(payload);
+                        if (response.data.success) {
+                            let pairsArray = response.data.idNamePairs;
+                            storeReducer({
+                                type: GlobalStoreActionType.PUBLISH_LIST,
+                                payload: {
+                                    idNamePairs: pairsArray
+                                }
+                            });
+                            tps.clearAllTransactions();
+                            history.push("/");
+                        }
+                    }
+                    getListPairs(top5List);
+                }
+            }
+            updateList(top5List)
+        }
+    }
 
+    store.view = async function (id) {
+        let payload = {
+            userName: auth.user.userName
+        }
+        let response = await api.getTop5ListById(id, payload);
+        if (response.data.success) {
+            let top5List = response.data.top5List;
+
+            top5List.views = top5List.views + 1
+
+            async function updateList(top5List) {
+                response = await api.updateTop5ListById(top5List._id, top5List);
+                console.log(top5List)
+                if (response.data.success) {
+                    async function getListPairs(top5List) {
+                        let payload = {
+                            userName: auth.user.userName
+                        };
+                        response = await api.getTop5ListPairs(payload);
+                        if (response.data.success) {
+                            let pairsArray = response.data.idNamePairs;
+                            storeReducer({
+                                type: GlobalStoreActionType.PUBLISH_LIST,
+                                payload: {
+                                    idNamePairs: pairsArray
+                                }
+                            });
+                            tps.clearAllTransactions();
+                            history.push("/");
+                        }
+                    }
+                    getListPairs(top5List);
                 }
             }
             updateList(top5List)
