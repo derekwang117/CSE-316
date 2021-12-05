@@ -9,7 +9,7 @@ import Modal from '@mui/material/Modal';
 import Alert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
 
-import ViewBanner from './ViewBanner.js'
+import ViewBanner from './ViewBanner.js';
 
 /*
     This React component lists all the top5 lists in the UI.
