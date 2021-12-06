@@ -583,7 +583,6 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
-    console.log(store.idNamePairs)
     store.setViewMode = async function (mode, searchText) {
         let payload = {
             userName: auth.user.userName

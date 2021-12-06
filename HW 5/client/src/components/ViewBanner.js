@@ -128,7 +128,7 @@ export default function AppBanner() {
                         aria-label='home'
                         onClick={handleView1}
                         style={{ color: coolColor }}
-                        sx={store.viewMode === 1 ? { border: 3, borderRadius: 0, borderColor: "#43d61f" } : {}}>
+                        sx={store.currentList ? {} : store.viewMode === 1 ? { border: 3, borderRadius: 0, borderColor: "#43d61f" } : {}}>
                         <HomeOutlinedIcon style={{ fontSize: '40pt' }} />
                     </IconButton>
                     <IconButton
@@ -175,13 +175,13 @@ export default function AppBanner() {
 
                     <IconButton
                         disabled={store.currentList}
+                        onClick={handleProfileMenuOpen}
                         aria-label='sort'
                         style={{ color: coolColor, fontSize: '20pt', fontWeight: 'bold' }}>
                         SORT BY
                         <SortOutlinedIcon style={{ fontSize: '40pt' }}
                             aria-controls={menuId}
-                            aria-haspopup="true"
-                            onClick={handleProfileMenuOpen} />
+                            aria-haspopup="true" />
                     </IconButton>
 
                 </Toolbar>
