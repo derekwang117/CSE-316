@@ -135,7 +135,7 @@ function ListCard(props) {
         )
         expandedComments = (
             <div>
-                <List sx={{ pt: 0, mb:1 }} style={{ minHeight:226, maxHeight: 226, overflow: 'auto' }}>
+                <List sx={{ pt: 0, mb: 1 }} style={{ minHeight: 226, maxHeight: 226, overflow: 'auto' }}>
                     {
                         idNamePair.comments.map((ele) => (
                             <ListItem

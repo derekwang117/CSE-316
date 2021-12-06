@@ -25,6 +25,7 @@ export default function AppBanner() {
     const { store } = useContext(GlobalStoreContext);
     const [anchorEl, setAnchorEl] = useState(null);
     const isMenuOpen = Boolean(anchorEl);
+    const [text, setText] = useState("");
 
     const handleProfileMenuOpen = (event) => {
         setAnchorEl(event.currentTarget);
@@ -35,19 +36,19 @@ export default function AppBanner() {
     };
 
     const handleView1 = () => {
-        store.setViewMode(1)
+        store.setViewMode(1, "")
     }
 
     const handleView2 = () => {
-        store.setViewMode(2)
+        store.setViewMode(2, "")
     }
 
     const handleView3 = () => {
-        store.setViewMode(3)
+        store.setViewMode(3, "")
     }
 
     const handleView4 = () => {
-        store.setViewMode(4)
+        store.setViewMode(4, "")
     }
 
     const sortPublishDateNew = () => {
@@ -73,6 +74,17 @@ export default function AppBanner() {
     const sortDislikes = () => {
         handleMenuClose();
 
+    }
+
+    function handleUpdateText(event) {
+        setText(event.target.value);
+    }
+
+    function handleKeyPress(event) {
+        if (event.code === "Enter") {
+            store.searchText(text)
+            setText("")
+        }
     }
 
     const menuId = 'search-menu';
@@ -152,6 +164,9 @@ export default function AppBanner() {
                             name="search"
                             fullWidth
                             sx={{ backgroundColor: searchColor }}
+                            value={text}
+                            onChange={handleUpdateText}
+                            onKeyPress={(event) => { handleKeyPress(event) }}
                         />
                     </Grid>
 

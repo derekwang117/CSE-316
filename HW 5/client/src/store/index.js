@@ -27,7 +27,8 @@ export const GlobalStoreActionType = {
     SET_CURRENT_LIST: "SET_CURRENT_LIST",
     SET_ITEM_EDIT_ACTIVE: "SET_ITEM_EDIT_ACTIVE",
     SET_LIST_NAME_EDIT_ACTIVE: "SET_LIST_NAME_EDIT_ACTIVE",
-    SET_VIEW_MODE: "SET_VIEW_MODE"
+    SET_VIEW_MODE: "SET_VIEW_MODE",
+    REPLACE_LIST: "REPLACE_LIST"
 }
 
 // WE'LL NEED THIS TO PROCESS TRANSACTIONS
@@ -44,7 +45,8 @@ function GlobalStoreContextProvider(props) {
         listNameActive: false,
         itemActive: false,
         listMarkedForDeletion: null,
-        viewMode: 1
+        viewMode: 1,
+        search: ""
     });
     const history = useHistory();
 
@@ -65,7 +67,8 @@ function GlobalStoreContextProvider(props) {
                     isListNameEditActive: false,
                     isItemEditActive: false,
                     listMarkedForDeletion: null,
-                    viewMode: 1
+                    viewMode: 1,
+                    search: store.search
                 });
             }
             // STOP EDITING THE CURRENT LIST
@@ -77,7 +80,8 @@ function GlobalStoreContextProvider(props) {
                     isListNameEditActive: false,
                     isItemEditActive: false,
                     listMarkedForDeletion: null,
-                    viewMode: 1
+                    viewMode: 1,
+                    search: ""
                 })
             }
             // CREATE A NEW LIST
@@ -89,7 +93,8 @@ function GlobalStoreContextProvider(props) {
                     isListNameEditActive: false,
                     isItemEditActive: false,
                     listMarkedForDeletion: null,
-                    viewMode: 1
+                    viewMode: 1,
+                    search: store.search
                 })
             }
             // GET ALL THE LISTS SO WE CAN PRESENT THEM
@@ -101,7 +106,8 @@ function GlobalStoreContextProvider(props) {
                     isListNameEditActive: false,
                     isItemEditActive: false,
                     listMarkedForDeletion: null,
-                    viewMode: store.viewMode
+                    viewMode: store.viewMode,
+                    search: store.search
                 });
             }
             // PREPARE TO DELETE A LIST
@@ -113,7 +119,8 @@ function GlobalStoreContextProvider(props) {
                     isListNameEditActive: false,
                     isItemEditActive: false,
                     listMarkedForDeletion: payload,
-                    viewMode: 1
+                    viewMode: 1,
+                    search: store.search
                 });
             }
             // PREPARE TO DELETE A LIST
@@ -125,7 +132,8 @@ function GlobalStoreContextProvider(props) {
                     isListNameEditActive: false,
                     isItemEditActive: false,
                     listMarkedForDeletion: null,
-                    viewMode: 1
+                    viewMode: 1,
+                    search: store.search
                 });
             }
             // UPDATE A LIST
@@ -137,7 +145,8 @@ function GlobalStoreContextProvider(props) {
                     isListNameEditActive: false,
                     isItemEditActive: false,
                     listMarkedForDeletion: null,
-                    viewMode: 1
+                    viewMode: 1,
+                    search: store.search
                 });
             }
             // START EDITING A LIST ITEM
@@ -149,7 +158,8 @@ function GlobalStoreContextProvider(props) {
                     isListNameEditActive: false,
                     isItemEditActive: true,
                     listMarkedForDeletion: null,
-                    viewMode: 1
+                    viewMode: 1,
+                    search: store.search
                 });
             }
             // START EDITING A LIST NAME
@@ -161,7 +171,8 @@ function GlobalStoreContextProvider(props) {
                     isListNameEditActive: true,
                     isItemEditActive: false,
                     listMarkedForDeletion: null,
-                    viewMode: 1
+                    viewMode: 1,
+                    search: store.search
                 });
             }
             case GlobalStoreActionType.SET_VIEW_MODE: {
@@ -172,7 +183,20 @@ function GlobalStoreContextProvider(props) {
                     isListNameEditActive: false,
                     isItemEditActive: false,
                     listMarkedForDeletion: null,
-                    viewMode: payload.viewMode
+                    viewMode: payload.viewMode,
+                    search: payload.search
+                })
+            }
+            case GlobalStoreActionType.REPLACE_LIST: {
+                return setStore({
+                    idNamePairs: payload,
+                    currentList: null,
+                    newListCounter: store.newListCounter,
+                    isListNameEditActive: false,
+                    isItemEditActive: false,
+                    listMarkedForDeletion: null,
+                    viewMode: store.viewMode,
+                    search: store.search
                 })
             }
             default:
@@ -280,7 +304,7 @@ function GlobalStoreContextProvider(props) {
                 payload: pairsArray
             });*/
             //idk what the top thing does but this is better (:
-            store.setViewMode(store.viewMode)
+            store.setViewMode(store.viewMode, store.search)
         }
         else {
             console.log("API FAILED TO GET THE LIST PAIRS");
@@ -472,11 +496,21 @@ function GlobalStoreContextProvider(props) {
             async function updateList(top5List) {
                 response = await api.updateTop5ListById(top5List._id, top5List);
                 if (response.data.success) {
-                    store.setViewMode(store.viewMode)
+                    store.setViewMode(store.viewMode, store.search)
                 }
             }
             updateList(top5List)
         }
+    }
+
+    store.replaceList = async function (newList) {
+        let index = store.idNamePairs.map(function (list) { return list._id }).indexOf(newList._id)
+        let idNamePairs = store.idNamePairs
+        idNamePairs.splice(index, 1, newList)
+        storeReducer({
+            type: GlobalStoreActionType.REPLACE_LIST,
+            payload: idNamePairs
+        });
     }
 
     store.newComment = async function (id, comment) {
@@ -490,7 +524,7 @@ function GlobalStoreContextProvider(props) {
             async function updateList(top5List) {
                 response = await api.updateTop5ListById(top5List._id, top5List);
                 if (response.data.success) {
-                    store.setViewMode(store.viewMode)
+                    store.replaceList(top5List)
                 }
             }
             updateList(top5List)
@@ -522,7 +556,7 @@ function GlobalStoreContextProvider(props) {
             async function updateList(top5List) {
                 response = await api.updateTop5ListById(top5List._id, top5List);
                 if (response.data.success) {
-                    store.setViewMode(store.viewMode)
+                    store.replaceList(top5List)
                 }
             }
             updateList(top5List)
@@ -542,14 +576,15 @@ function GlobalStoreContextProvider(props) {
             async function updateList(top5List) {
                 response = await api.updateTop5ListById(top5List._id, top5List);
                 if (response.data.success) {
-                    store.setViewMode(store.viewMode)
+                    store.replaceList(top5List)
                 }
             }
             updateList(top5List)
         }
     }
 
-    store.setViewMode = async function (mode) {
+    console.log(store.idNamePairs)
+    store.setViewMode = async function (mode, searchText) {
         let payload = {
             userName: auth.user.userName
         };
@@ -559,20 +594,33 @@ function GlobalStoreContextProvider(props) {
             let viewMode = 1
 
             if (mode === 1) {
-                pairsArray = pairsArray.filter(ele => ele.userName === auth.user.userName)
                 viewMode = 1
+                pairsArray = pairsArray.filter(ele => ele.userName === auth.user.userName)
+
+                pairsArray = pairsArray.filter(ele => ele.name.startsWith(searchText))
+
             }
             else if (mode === 2) {
-                pairsArray = pairsArray.filter(ele => ele.isPublished === true && ele.isCommunityList === false)
                 viewMode = 2
+                pairsArray = pairsArray.filter(ele => ele.isPublished === true && ele.isCommunityList === false)
+
+                pairsArray = pairsArray.filter(ele => ele.name.startsWith(searchText))
+
             }
             else if (mode === 3) {
-                pairsArray = pairsArray.filter(ele => ele.isPublished === true && ele.isCommunityList === false)
                 viewMode = 3
+                pairsArray = pairsArray.filter(ele => ele.isPublished === true && ele.isCommunityList === false)
+
+                pairsArray = pairsArray.filter(ele => ele.userName.startsWith(searchText))
+                if (!searchText) {
+                    pairsArray = []
+                }
             }
             else if (mode === 4) {
-                pairsArray = pairsArray.filter(ele => ele.isCommunityList === true)
                 viewMode = 4
+                pairsArray = pairsArray.filter(ele => ele.isCommunityList === true)
+
+                pairsArray = pairsArray.filter(ele => ele.name.startsWith(searchText))
             }
 
             if (mode !== store.viewMode) {
@@ -580,7 +628,8 @@ function GlobalStoreContextProvider(props) {
                     type: GlobalStoreActionType.SET_VIEW_MODE,
                     payload: {
                         idNamePairs: [],
-                        viewMode: viewMode
+                        viewMode: viewMode,
+                        search: searchText
                     }
                 });
             }
@@ -589,12 +638,17 @@ function GlobalStoreContextProvider(props) {
                 type: GlobalStoreActionType.SET_VIEW_MODE,
                 payload: {
                     idNamePairs: pairsArray,
-                    viewMode: viewMode
+                    viewMode: viewMode,
+                    search: searchText
                 }
             });
             tps.clearAllTransactions();
             history.push("/");
         }
+    }
+
+    store.searchText = async function (searchText) {
+        store.setViewMode(store.viewMode, searchText)
     }
 
     return (
