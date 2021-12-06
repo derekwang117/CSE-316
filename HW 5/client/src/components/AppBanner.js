@@ -92,7 +92,7 @@ export default function AppBanner() {
     if (auth.user) {
         menuIcon = auth.user.firstName.charAt(0) + auth.user.lastName.charAt(0)
     }
-    if (auth.user.userName === "GuestGuestGuestGuestGuestGuestGuestGuestGuestGuest") {
+    if (auth.user && auth.user.userName === "GuestGuestGuestGuestGuestGuestGuestGuestGuestGuest") {
         menuIcon = "Guest"
     }
 
