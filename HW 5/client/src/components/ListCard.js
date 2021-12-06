@@ -287,7 +287,9 @@ function ListCard(props) {
                             <Box sx={{ pt: 2, pb: 1 }}>
                                 <Typography
                                     style={{ color: "black" }}>
-                                    {"Published: " + dateToString(idNamePair.updatedAt)}
+                                    {idNamePair.userName ? 
+                                    "Published: " + dateToString(idNamePair.createdAt) : 
+                                    "Updated: " + dateToString(idNamePair.updatedAt)}
                                 </Typography>
                             </Box>
                         </Grid>

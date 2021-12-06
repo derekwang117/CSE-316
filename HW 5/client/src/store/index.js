@@ -304,7 +304,7 @@ function GlobalStoreContextProvider(props) {
                 payload: pairsArray
             });*/
             //idk what the top thing does but this is better (:
-            store.setViewMode(store.viewMode, store.search)
+            store.setViewMode(store.viewMode, store.search, 0)
         }
         else {
             console.log("API FAILED TO GET THE LIST PAIRS");
@@ -496,7 +496,7 @@ function GlobalStoreContextProvider(props) {
             async function updateList(top5List) {
                 response = await api.updateTop5ListById(top5List._id, top5List);
                 if (response.data.success) {
-                    store.setViewMode(store.viewMode, store.search)
+                    store.setViewMode(store.viewMode, store.search, 0)
                 }
             }
             updateList(top5List)
@@ -583,7 +583,7 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
-    store.setViewMode = async function (mode, searchText) {
+    store.setViewMode = async function (mode, searchText, sortOrder) {
         let payload = {
             userName: auth.user.userName
         };
@@ -598,6 +598,9 @@ function GlobalStoreContextProvider(props) {
 
                 pairsArray = pairsArray.filter(ele => ele.name.startsWith(searchText))
 
+                if (sortOrder === 0) {
+                    // no specification
+                }
             }
             else if (mode === 2) {
                 viewMode = 2
@@ -605,6 +608,10 @@ function GlobalStoreContextProvider(props) {
 
                 pairsArray = pairsArray.filter(ele => ele.name.startsWith(searchText))
 
+                if (sortOrder === 0) {
+                    // newest first
+                    pairsArray.sort((a, b) => (b.createdAt > a.createdAt))
+                }
             }
             else if (mode === 3) {
                 viewMode = 3
@@ -614,12 +621,39 @@ function GlobalStoreContextProvider(props) {
                 if (!searchText) {
                     pairsArray = []
                 }
+
+                if (sortOrder === 0) {
+                    // no specifications
+                }
             }
             else if (mode === 4) {
                 viewMode = 4
                 pairsArray = pairsArray.filter(ele => ele.isCommunityList === true)
 
                 pairsArray = pairsArray.filter(ele => ele.name.startsWith(searchText))
+
+                if (sortOrder === 0) {
+                    // newest first
+                    pairsArray.sort((a, b) => (b.updatedAt > a.updatedAt))
+                }
+            }
+
+            if (sortOrder === 1) {
+                // newest first
+                pairsArray.sort((a, b) => (b.createdAt > a.createdAt))
+            }
+            if (sortOrder === 2) {
+                // oldest first
+                pairsArray.sort((a, b) => (b.createdAt < a.createdAt))
+            }
+            if (sortOrder === 3) {
+                    pairsArray.sort((a, b) => (b.views > a.views))
+            }
+            if (sortOrder === 4) {
+                    pairsArray.sort((a, b) => (b.upvotes.length > a.upvotes.length))
+            }
+            if (sortOrder === 5) {
+                    pairsArray.sort((a, b) => (b.downvotes.length > a.downvotes.length))
             }
 
             if (mode !== store.viewMode) {
@@ -647,7 +681,7 @@ function GlobalStoreContextProvider(props) {
     }
 
     store.searchText = async function (searchText) {
-        store.setViewMode(store.viewMode, searchText)
+        store.setViewMode(store.viewMode, searchText, -1)
     }
 
     return (

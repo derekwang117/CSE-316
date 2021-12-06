@@ -36,44 +36,48 @@ export default function AppBanner() {
     };
 
     const handleView1 = () => {
-        store.setViewMode(1, "")
+        setText("")
+        store.setViewMode(1, "", 0)
     }
 
     const handleView2 = () => {
-        store.setViewMode(2, "")
+        setText("")
+        store.setViewMode(2, "", 0)
     }
 
     const handleView3 = () => {
-        store.setViewMode(3, "")
+        setText("")
+        store.setViewMode(3, "", 0)
     }
 
     const handleView4 = () => {
-        store.setViewMode(4, "")
+        setText("")
+        store.setViewMode(4, "", 0)
     }
 
     const sortPublishDateNew = () => {
         handleMenuClose();
-
+        store.setViewMode(store.viewMode, text, 1)
     }
 
     const sortPublishDateOld = () => {
         handleMenuClose();
-
+        store.setViewMode(store.viewMode, text, 2)
     }
 
     const sortViews = () => {
         handleMenuClose();
-
+        store.setViewMode(store.viewMode, text, 3)
     }
 
     const sortLikes = () => {
         handleMenuClose();
-
+        store.setViewMode(store.viewMode, text, 4)
     }
 
     const sortDislikes = () => {
         handleMenuClose();
-
+        store.setViewMode(store.viewMode, text, 5)
     }
 
     function handleUpdateText(event) {
@@ -83,7 +87,6 @@ export default function AppBanner() {
     function handleKeyPress(event) {
         if (event.code === "Enter") {
             store.searchText(text)
-            setText("")
         }
     }
 
