@@ -27,7 +27,7 @@ export const GlobalStoreActionType = {
     SET_CURRENT_LIST: "SET_CURRENT_LIST",
     SET_ITEM_EDIT_ACTIVE: "SET_ITEM_EDIT_ACTIVE",
     SET_LIST_NAME_EDIT_ACTIVE: "SET_LIST_NAME_EDIT_ACTIVE",
-    PUBLISH_LIST: "PUBLISH_LIST"
+    SET_VIEW_MODE: "SET_VIEW_MODE"
 }
 
 // WE'LL NEED THIS TO PROCESS TRANSACTIONS
@@ -50,9 +50,6 @@ function GlobalStoreContextProvider(props) {
 
     // SINCE WE'VE WRAPPED THE STORE IN THE AUTH CONTEXT WE CAN ACCESS THE USER HERE
     const { auth } = useContext(AuthContext);
-    
-    // 1: home, 2: all, 3: users, 4: community
-    console.log(store.viewMode)
 
     // HERE'S THE DATA STORE'S REDUCER, IT MUST
     // HANDLE EVERY TYPE OF STATE CHANGE
@@ -68,7 +65,7 @@ function GlobalStoreContextProvider(props) {
                     isListNameEditActive: false,
                     isItemEditActive: false,
                     listMarkedForDeletion: null,
-                    viewMode : 1
+                    viewMode: 1
                 });
             }
             // STOP EDITING THE CURRENT LIST
@@ -80,7 +77,7 @@ function GlobalStoreContextProvider(props) {
                     isListNameEditActive: false,
                     isItemEditActive: false,
                     listMarkedForDeletion: null,
-                    viewMode : 1
+                    viewMode: 1
                 })
             }
             // CREATE A NEW LIST
@@ -92,7 +89,7 @@ function GlobalStoreContextProvider(props) {
                     isListNameEditActive: false,
                     isItemEditActive: false,
                     listMarkedForDeletion: null,
-                    viewMode : 1
+                    viewMode: 1
                 })
             }
             // GET ALL THE LISTS SO WE CAN PRESENT THEM
@@ -104,7 +101,7 @@ function GlobalStoreContextProvider(props) {
                     isListNameEditActive: false,
                     isItemEditActive: false,
                     listMarkedForDeletion: null,
-                    viewMode : store.viewMode
+                    viewMode: store.viewMode
                 });
             }
             // PREPARE TO DELETE A LIST
@@ -116,7 +113,7 @@ function GlobalStoreContextProvider(props) {
                     isListNameEditActive: false,
                     isItemEditActive: false,
                     listMarkedForDeletion: payload,
-                    viewMode : 1
+                    viewMode: 1
                 });
             }
             // PREPARE TO DELETE A LIST
@@ -128,7 +125,7 @@ function GlobalStoreContextProvider(props) {
                     isListNameEditActive: false,
                     isItemEditActive: false,
                     listMarkedForDeletion: null,
-                    viewMode : 1
+                    viewMode: 1
                 });
             }
             // UPDATE A LIST
@@ -140,7 +137,7 @@ function GlobalStoreContextProvider(props) {
                     isListNameEditActive: false,
                     isItemEditActive: false,
                     listMarkedForDeletion: null,
-                    viewMode : 1
+                    viewMode: 1
                 });
             }
             // START EDITING A LIST ITEM
@@ -152,7 +149,7 @@ function GlobalStoreContextProvider(props) {
                     isListNameEditActive: false,
                     isItemEditActive: true,
                     listMarkedForDeletion: null,
-                    viewMode : 1
+                    viewMode: 1
                 });
             }
             // START EDITING A LIST NAME
@@ -164,11 +161,10 @@ function GlobalStoreContextProvider(props) {
                     isListNameEditActive: true,
                     isItemEditActive: false,
                     listMarkedForDeletion: null,
-                    viewMode : 1
+                    viewMode: 1
                 });
             }
-            //publish list
-            case GlobalStoreActionType.PUBLISH_LIST: {
+            case GlobalStoreActionType.SET_VIEW_MODE: {
                 return setStore({
                     idNamePairs: payload.idNamePairs,
                     currentList: null,
@@ -176,7 +172,7 @@ function GlobalStoreContextProvider(props) {
                     isListNameEditActive: false,
                     isItemEditActive: false,
                     listMarkedForDeletion: null,
-                    viewMode : 1
+                    viewMode: payload.viewMode
                 })
             }
             default:
@@ -208,6 +204,7 @@ function GlobalStoreContextProvider(props) {
                             response = await api.getTop5ListPairs(payload);
                             if (response.data.success) {
                                 let pairsArray = response.data.idNamePairs;
+                                pairsArray = pairsArray.filter(ele => ele.userName === auth.user.userName)
                                 storeReducer({
                                     type: GlobalStoreActionType.CHANGE_LIST_NAME,
                                     payload: {
@@ -277,11 +274,13 @@ function GlobalStoreContextProvider(props) {
         };
         const response = await api.getTop5ListPairs(payload);
         if (response.data.success) {
-            let pairsArray = response.data.idNamePairs;
+            /*let pairsArray = response.data.idNamePairs;
             storeReducer({
                 type: GlobalStoreActionType.LOAD_ID_NAME_PAIRS,
                 payload: pairsArray
-            });
+            });*/
+            //idk what the top thing does but this is better (:
+            store.setViewMode(store.viewMode)
         }
         else {
             console.log("API FAILED TO GET THE LIST PAIRS");
@@ -473,24 +472,7 @@ function GlobalStoreContextProvider(props) {
             async function updateList(top5List) {
                 response = await api.updateTop5ListById(top5List._id, top5List);
                 if (response.data.success) {
-                    async function getListPairs(top5List) {
-                        let payload = {
-                            userName: auth.user.userName
-                        };
-                        response = await api.getTop5ListPairs(payload);
-                        if (response.data.success) {
-                            let pairsArray = response.data.idNamePairs;
-                            storeReducer({
-                                type: GlobalStoreActionType.PUBLISH_LIST,
-                                payload: {
-                                    idNamePairs: pairsArray
-                                }
-                            });
-                            tps.clearAllTransactions();
-                            history.push("/");
-                        }
-                    }
-                    getListPairs(top5List);
+                    store.setViewMode(store.viewMode)
                 }
             }
             updateList(top5List)
@@ -508,24 +490,7 @@ function GlobalStoreContextProvider(props) {
             async function updateList(top5List) {
                 response = await api.updateTop5ListById(top5List._id, top5List);
                 if (response.data.success) {
-                    async function getListPairs(top5List) {
-                        let payload = {
-                            userName: auth.user.userName
-                        };
-                        response = await api.getTop5ListPairs(payload);
-                        if (response.data.success) {
-                            let pairsArray = response.data.idNamePairs;
-                            storeReducer({
-                                type: GlobalStoreActionType.PUBLISH_LIST,
-                                payload: {
-                                    idNamePairs: pairsArray
-                                }
-                            });
-                            tps.clearAllTransactions();
-                            history.push("/");
-                        }
-                    }
-                    getListPairs(top5List);
+                    store.setViewMode(store.viewMode)
                 }
             }
             updateList(top5List)
@@ -557,24 +522,7 @@ function GlobalStoreContextProvider(props) {
             async function updateList(top5List) {
                 response = await api.updateTop5ListById(top5List._id, top5List);
                 if (response.data.success) {
-                    async function getListPairs(top5List) {
-                        let payload = {
-                            userName: auth.user.userName
-                        };
-                        response = await api.getTop5ListPairs(payload);
-                        if (response.data.success) {
-                            let pairsArray = response.data.idNamePairs;
-                            storeReducer({
-                                type: GlobalStoreActionType.PUBLISH_LIST,
-                                payload: {
-                                    idNamePairs: pairsArray
-                                }
-                            });
-                            tps.clearAllTransactions();
-                            history.push("/");
-                        }
-                    }
-                    getListPairs(top5List);
+                    store.setViewMode(store.viewMode)
                 }
             }
             updateList(top5List)
@@ -594,27 +542,58 @@ function GlobalStoreContextProvider(props) {
             async function updateList(top5List) {
                 response = await api.updateTop5ListById(top5List._id, top5List);
                 if (response.data.success) {
-                    async function getListPairs(top5List) {
-                        let payload = {
-                            userName: auth.user.userName
-                        };
-                        response = await api.getTop5ListPairs(payload);
-                        if (response.data.success) {
-                            let pairsArray = response.data.idNamePairs;
-                            storeReducer({
-                                type: GlobalStoreActionType.PUBLISH_LIST,
-                                payload: {
-                                    idNamePairs: pairsArray
-                                }
-                            });
-                            tps.clearAllTransactions();
-                            history.push("/");
-                        }
-                    }
-                    getListPairs(top5List);
+                    store.setViewMode(store.viewMode)
                 }
             }
             updateList(top5List)
+        }
+    }
+
+    store.setViewMode = async function (mode) {
+        let payload = {
+            userName: auth.user.userName
+        };
+        let response = await api.getTop5ListPairs(payload);
+        if (response.data.success) {
+            let pairsArray = response.data.idNamePairs;
+            let viewMode = 1
+
+            if (mode === 1) {
+                pairsArray = pairsArray.filter(ele => ele.userName === auth.user.userName)
+                viewMode = 1
+            }
+            else if (mode === 2) {
+                pairsArray = pairsArray.filter(ele => ele.isPublished === true && ele.isCommunityList === false)
+                viewMode = 2
+            }
+            else if (mode === 3) {
+                pairsArray = pairsArray.filter(ele => ele.isPublished === true && ele.isCommunityList === false)
+                viewMode = 3
+            }
+            else if (mode === 4) {
+                pairsArray = pairsArray.filter(ele => ele.isCommunityList === true)
+                viewMode = 4
+            }
+
+            if (mode !== store.viewMode) {
+                storeReducer({
+                    type: GlobalStoreActionType.SET_VIEW_MODE,
+                    payload: {
+                        idNamePairs: [],
+                        viewMode: viewMode
+                    }
+                });
+            }
+
+            storeReducer({
+                type: GlobalStoreActionType.SET_VIEW_MODE,
+                payload: {
+                    idNamePairs: pairsArray,
+                    viewMode: viewMode
+                }
+            });
+            tps.clearAllTransactions();
+            history.push("/");
         }
     }
 

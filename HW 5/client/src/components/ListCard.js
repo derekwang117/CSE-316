@@ -135,7 +135,7 @@ function ListCard(props) {
         )
         expandedComments = (
             <div>
-                <List sx={{ pt: 0, mb:1 }} style={{ maxHeight: 226, overflow: 'auto' }}>
+                <List sx={{ pt: 0, mb:1 }} style={{ minHeight:226, maxHeight: 226, overflow: 'auto' }}>
                     {
                         idNamePair.comments.map((ele) => (
                             <ListItem
@@ -236,7 +236,7 @@ function ListCard(props) {
                             <Box sx={{ pt: 0 }}>
                                 <Typography
                                     style={{ color: "black" }}>
-                                    {"By " + idNamePair.userName}
+                                    {idNamePair.userName ? "By " + idNamePair.userName : "Community List"}
                                 </Typography>
                             </Box>
                         </Grid>

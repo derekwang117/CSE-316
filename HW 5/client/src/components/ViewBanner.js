@@ -34,6 +34,22 @@ export default function AppBanner() {
         setAnchorEl(null);
     };
 
+    const handleView1 = () => {
+        store.setViewMode(1)
+    }
+
+    const handleView2 = () => {
+        store.setViewMode(2)
+    }
+
+    const handleView3 = () => {
+        store.setViewMode(3)
+    }
+
+    const handleView4 = () => {
+        store.setViewMode(4)
+    }
+
     const sortPublishDateNew = () => {
         handleMenuClose();
 
@@ -98,25 +114,33 @@ export default function AppBanner() {
                     <IconButton
                         disabled={store.currentList}
                         aria-label='home'
-                        style={{ color: coolColor }}>
+                        onClick={handleView1}
+                        style={{ color: coolColor }}
+                        sx={store.viewMode === 1 ? { border: 3, borderRadius: 0, borderColor: "#43d61f" } : {}}>
                         <HomeOutlinedIcon style={{ fontSize: '40pt' }} />
                     </IconButton>
                     <IconButton
                         disabled={store.currentList}
                         aria-label='all'
-                        style={{ color: coolColor }}>
+                        onClick={handleView2}
+                        style={{ color: coolColor }}
+                        sx={store.viewMode === 2 ? { border: 3, borderRadius: 0, borderColor: "#43d61f" } : {}}>
                         <GroupsOutlinedIcon style={{ fontSize: '40pt' }} />
                     </IconButton>
                     <IconButton
                         disabled={store.currentList}
                         aria-label='users'
-                        style={{ color: coolColor }}>
+                        onClick={handleView3}
+                        style={{ color: coolColor }}
+                        sx={store.viewMode === 3 ? { border: 3, borderRadius: 0, borderColor: "#43d61f" } : {}}>
                         <PersonOutlineOutlinedIcon style={{ fontSize: '40pt' }} />
                     </IconButton>
                     <IconButton
                         disabled={store.currentList}
                         aria-label='community'
-                        style={{ color: coolColor }}>
+                        onClick={handleView4}
+                        style={{ color: coolColor }}
+                        sx={store.viewMode === 4 ? { border: 3, borderRadius: 0, borderColor: "#43d61f" } : {}}>
                         <FunctionsOutlinedIcon style={{ fontSize: '40pt' }} />
                     </IconButton>
 
@@ -138,7 +162,7 @@ export default function AppBanner() {
                         disabled={store.currentList}
                         aria-label='sort'
                         style={{ color: coolColor, fontSize: '20pt', fontWeight: 'bold' }}>
-                            SORT BY
+                        SORT BY
                         <SortOutlinedIcon style={{ fontSize: '40pt' }}
                             aria-controls={menuId}
                             aria-haspopup="true"

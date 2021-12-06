@@ -153,7 +153,7 @@ getTop5ListById = async (req, res) => {
         if (err) {
             return res.status(400).json({ success: false, error: err });
         }
-        if (list && list.userName === userName) {
+        if (list && (list.userName === userName || list.isPublished)) {
             return res.status(200).json({ success: true, top5List: list })
         }
         else {
@@ -196,6 +196,7 @@ getTop5ListPairs = async (req, res) => {
                     name: list.name,
                     items: list.items,
                     userName: list.userName,
+                    isCommunityList: list.isCommunityList,
                     isPublished: list.isPublished,
                     comments: list.comments,
                     views: list.views,
@@ -204,7 +205,7 @@ getTop5ListPairs = async (req, res) => {
                     createdAt: list.createdAt,
                     updatedAt: list.updatedAt
                 };
-                if (userName === pair.userName) {
+                if (userName === pair.userName || pair.isPublished) {
                     pairs.push(pair);
                 }
             }
