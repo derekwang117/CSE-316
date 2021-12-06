@@ -13,6 +13,8 @@ import ThumbDownOutlinedIcon from '@mui/icons-material/ThumbDownOutlined';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Grid from '@mui/material/Grid';
 import List from '@mui/material/List';
+import AuthContext from '../auth';
+
 
 /*
     This is a card in our list of top 5 lists. It lets select
@@ -23,6 +25,7 @@ import List from '@mui/material/List';
 */
 function ListCard(props) {
     const { store } = useContext(GlobalStoreContext);
+    const { auth } = useContext(AuthContext);
     const { idNamePair } = props;
     const [expanded, setExpanded] = useState(false);
     const [text, setText] = useState("");
@@ -92,6 +95,10 @@ function ListCard(props) {
     let downvoteButtonColor = ""
     if (idNamePair.downvotes.includes(store.getUserName())) {
         downvoteButtonColor = "red"
+    }
+    if (auth.user.userName === "GuestGuestGuestGuestGuestGuestGuestGuestGuestGuest") {
+        upvoteButtonColor = "#9d9db6"
+        downvoteButtonColor = "#9d9db6"
     }
 
     let expandedCard = ""
@@ -163,6 +170,7 @@ function ListCard(props) {
                     id="comment-bar"
                     label="Add Comment"
                     name="comment-bar"
+                    disabled={auth.user.userName === "GuestGuestGuestGuestGuestGuestGuestGuestGuestGuest"}
                     fullWidth
                     sx={{ backgroundColor: "#FFFFFF" }}
                     value={text}
@@ -244,7 +252,8 @@ function ListCard(props) {
                             <div>
                                 <IconButton onClick={(event) => {
                                     handleUpvote(event, idNamePair._id)
-                                }} aria-label='delete'>
+                                }} aria-label='delete'
+                                    disabled={auth.user.userName === "GuestGuestGuestGuestGuestGuestGuestGuestGuestGuest"}>
                                     <ThumbUpOutlinedIcon style={{ fontSize: '32pt', color: upvoteButtonColor }} />
                                 </IconButton>
 
@@ -257,7 +266,8 @@ function ListCard(props) {
 
                                 <IconButton onClick={(event) => {
                                     handleDownvote(event, idNamePair._id)
-                                }} aria-label='delete'>
+                                }} aria-label='delete'
+                                    disabled={auth.user.userName === "GuestGuestGuestGuestGuestGuestGuestGuestGuestGuest"}>
                                     <ThumbDownOutlinedIcon style={{ fontSize: '32pt', color: downvoteButtonColor }} />
                                 </IconButton>
 
@@ -270,7 +280,8 @@ function ListCard(props) {
 
                                 <IconButton onClick={(event) => {
                                     handleDeleteList(event, idNamePair._id)
-                                }} aria-label='delete'>
+                                }} aria-label='delete'
+                                    disabled={auth.user.userName !== idNamePair.userName}>
                                     <DeleteOutlineOutlinedIcon style={{ fontSize: '32pt' }} />
                                 </IconButton>
                             </div>
@@ -287,9 +298,9 @@ function ListCard(props) {
                             <Box sx={{ pt: 2, pb: 1 }}>
                                 <Typography
                                     style={{ color: "black" }}>
-                                    {idNamePair.userName ? 
-                                    "Published: " + dateToString(idNamePair.createdAt) : 
-                                    "Updated: " + dateToString(idNamePair.updatedAt)}
+                                    {idNamePair.userName ?
+                                        "Published: " + dateToString(idNamePair.createdAt) :
+                                        "Updated: " + dateToString(idNamePair.updatedAt)}
                                 </Typography>
                             </Box>
                         </Grid>

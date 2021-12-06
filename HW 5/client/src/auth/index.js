@@ -88,13 +88,18 @@ function AuthContextProvider(props) {
     auth.getLoggedIn = async function () {
         const response = await api.getLoggedIn();
         if (response.status === 200) {
-            authReducer({
-                type: AuthActionType.GET_LOGGED_IN,
-                payload: {
-                    loggedIn: response.data.loggedIn,
-                    user: response.data.user
-                }
-            });
+            if (response.data.user.userName !== "GuestGuestGuestGuestGuestGuestGuestGuestGuestGuest") {
+                authReducer({
+                    type: AuthActionType.GET_LOGGED_IN,
+                    payload: {
+                        loggedIn: response.data.loggedIn,
+                        user: response.data.user
+                    }
+                });
+            }
+            else {
+                auth.logoutUser()
+            }
         }
         else if (response.status === 401) {
             authReducer({
@@ -168,6 +173,35 @@ function AuthContextProvider(props) {
 
                 }
             })
+        }
+    }
+
+    auth.loginGuest = async function (store) {
+        let userData = {
+            email: 'GuestGuestGuestGuestGuestGuestGuestGuestGuestGuest',
+            userName: 'GuestGuestGuestGuestGuestGuestGuestGuestGuestGuest',
+            password: 'GuestGuestGuestGuestGuestGuestGuestGuestGuestGuest'
+        }
+        const response = await api.loginUser(userData);
+        if (response.status === 200) {
+            authReducer({
+                type: AuthActionType.LOG_IN,
+                payload: {
+                    user: response.data.user
+                }
+            })
+            history.push("/");
+            store.loadIdNamePairs();
+        }
+        else if (response.status === 400) {
+            auth.registerUser({
+                firstName: "GuestGuestGuestGuestGuestGuestGuestGuestGuestGuest",
+                lastName: "GuestGuestGuestGuestGuestGuestGuestGuestGuestGuest",
+                email: "GuestGuestGuestGuestGuestGuestGuestGuestGuestGuest",
+                userName: "GuestGuestGuestGuestGuestGuestGuestGuestGuestGuest",
+                password: "GuestGuestGuestGuestGuestGuestGuestGuestGuestGuest",
+                passwordVerify: "GuestGuestGuestGuestGuestGuestGuestGuestGuestGuest"
+            }, store);
         }
     }
 

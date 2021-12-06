@@ -309,6 +309,10 @@ function GlobalStoreContextProvider(props) {
         else {
             console.log("API FAILED TO GET THE LIST PAIRS");
         }
+
+        if (auth.user.userName === "GuestGuestGuestGuestGuestGuestGuestGuestGuestGuest") {
+            store.setViewMode(2, "", 0)
+        }
     }
 
     // THE FOLLOWING 5 FUNCTIONS ARE FOR COORDINATING THE DELETION
@@ -584,6 +588,11 @@ function GlobalStoreContextProvider(props) {
     }
 
     store.setViewMode = async function (mode, searchText, sortOrder) {
+        let badCon = false
+        if (auth.user.userName === "GuestGuestGuestGuestGuestGuestGuestGuestGuestGuest" && mode === 1) {
+            badCon = true;
+        }
+
         let payload = {
             userName: auth.user.userName
         };
@@ -647,13 +656,13 @@ function GlobalStoreContextProvider(props) {
                 pairsArray.sort((a, b) => (b.createdAt < a.createdAt))
             }
             if (sortOrder === 3) {
-                    pairsArray.sort((a, b) => (b.views > a.views))
+                pairsArray.sort((a, b) => (b.views > a.views))
             }
             if (sortOrder === 4) {
-                    pairsArray.sort((a, b) => (b.upvotes.length > a.upvotes.length))
+                pairsArray.sort((a, b) => (b.upvotes.length > a.upvotes.length))
             }
             if (sortOrder === 5) {
-                    pairsArray.sort((a, b) => (b.downvotes.length > a.downvotes.length))
+                pairsArray.sort((a, b) => (b.downvotes.length > a.downvotes.length))
             }
 
             if (mode !== store.viewMode) {
@@ -667,16 +676,18 @@ function GlobalStoreContextProvider(props) {
                 });
             }
 
-            storeReducer({
-                type: GlobalStoreActionType.SET_VIEW_MODE,
-                payload: {
-                    idNamePairs: pairsArray,
-                    viewMode: viewMode,
-                    search: searchText
-                }
-            });
-            tps.clearAllTransactions();
-            history.push("/");
+            if (!badCon) {
+                storeReducer({
+                    type: GlobalStoreActionType.SET_VIEW_MODE,
+                    payload: {
+                        idNamePairs: pairsArray,
+                        viewMode: viewMode,
+                        search: searchText
+                    }
+                });
+                tps.clearAllTransactions();
+                history.push("/");
+            }
         }
     }
 

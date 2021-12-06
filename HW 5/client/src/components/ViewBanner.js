@@ -127,10 +127,10 @@ export default function AppBanner() {
             <AppBar position="static" style={{ background: "#c4c4c4", boxShadow: "none" }}>
                 <Toolbar>
                     <IconButton
-                        disabled={store.currentList}
+                        disabled={store.currentList || auth.user.userName === "GuestGuestGuestGuestGuestGuestGuestGuestGuestGuest"}
                         aria-label='home'
                         onClick={handleView1}
-                        style={{ color: coolColor }}
+                        style={{ color: auth.user.userName === "GuestGuestGuestGuestGuestGuestGuestGuestGuestGuest" ? "" : coolColor }}
                         sx={store.currentList ? {} : store.viewMode === 1 ? { border: 3, borderRadius: 0, borderColor: "#43d61f" } : {}}>
                         <HomeOutlinedIcon style={{ fontSize: '40pt' }} />
                     </IconButton>
