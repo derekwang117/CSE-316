@@ -176,10 +176,7 @@ getTop5Lists = async (req, res) => {
 }
 getTop5ListPairs = async (req, res) => {
     await Top5List.find({}, (err, top5Lists) => {
-        console.log("test3")
         let userName = req.body.userName
-        console.log("USERNAMEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE")
-        console.log(userName)
         if (err) {
             return res.status(400).json({ success: false, error: err })
         }

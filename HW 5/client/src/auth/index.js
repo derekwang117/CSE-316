@@ -171,16 +171,6 @@ function AuthContextProvider(props) {
         }
     }
 
-    auth.loginGuest = async function (store) {
-        authReducer({
-            type: AuthActionType.LOG_AS_GUEST,
-            payload: {
-
-            }
-        })
-        store.setViewMode(2, "", 0)
-    }
-
     return (
         <AuthContext.Provider value={{
             auth

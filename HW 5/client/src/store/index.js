@@ -293,23 +293,21 @@ function GlobalStoreContextProvider(props) {
 
     // THIS FUNCTION LOADS ALL THE ID, NAME PAIRS SO WE CAN LIST ALL THE LISTS
     store.loadIdNamePairs = async function () {
-        if (auth.user) {
-            let payload = {
-                userName: auth.user.userName
-            };
-            const response = await api.getTop5ListPairs(payload);
-            if (response.data.success) {
-                /*let pairsArray = response.data.idNamePairs;
-                storeReducer({
-                    type: GlobalStoreActionType.LOAD_ID_NAME_PAIRS,
-                    payload: pairsArray
-                });*/
-                //idk what the top thing does but this is better (:
-                store.setViewMode(store.viewMode, store.search, 0)
-            }
-            else {
-                console.log("API FAILED TO GET THE LIST PAIRS");
-            }
+        let payload = {
+            userName: auth.user.userName
+        };
+        const response = await api.getTop5ListPairs(payload);
+        if (response.data.success) {
+            /*let pairsArray = response.data.idNamePairs;
+            storeReducer({
+                type: GlobalStoreActionType.LOAD_ID_NAME_PAIRS,
+                payload: pairsArray
+            });*/
+            //idk what the top thing does but this is better (:
+            store.setViewMode(store.viewMode, store.search, 0)
+        }
+        else {
+            console.log("API FAILED TO GET THE LIST PAIRS");
         }
     }
 
@@ -587,17 +585,9 @@ function GlobalStoreContextProvider(props) {
 
     store.setViewMode = async function (mode, searchText, sortOrder) {
         let payload = {
-            userName: "e"
-        }
-        if (auth.user) {
-            payload = {
-                userName: auth.user.userName
-            };
-        }
-        console.log("test1")
-        console.log(payload)
+            userName: auth.user.userName
+        };
         let response = await api.getTop5ListPairs(payload);
-        console.log("test2")
         if (response.data.success) {
             let pairsArray = response.data.idNamePairs;
             let viewMode = 1
@@ -657,13 +647,13 @@ function GlobalStoreContextProvider(props) {
                 pairsArray.sort((a, b) => (b.createdAt < a.createdAt))
             }
             if (sortOrder === 3) {
-                pairsArray.sort((a, b) => (b.views > a.views))
+                    pairsArray.sort((a, b) => (b.views > a.views))
             }
             if (sortOrder === 4) {
-                pairsArray.sort((a, b) => (b.upvotes.length > a.upvotes.length))
+                    pairsArray.sort((a, b) => (b.upvotes.length > a.upvotes.length))
             }
             if (sortOrder === 5) {
-                pairsArray.sort((a, b) => (b.downvotes.length > a.downvotes.length))
+                    pairsArray.sort((a, b) => (b.downvotes.length > a.downvotes.length))
             }
 
             if (mode !== store.viewMode) {
@@ -685,6 +675,8 @@ function GlobalStoreContextProvider(props) {
                     search: searchText
                 }
             });
+            tps.clearAllTransactions();
+            history.push("/");
         }
     }
 
