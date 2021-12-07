@@ -86,6 +86,7 @@ export default function AppBanner() {
 
     function handleKeyPress(event) {
         if (event.code === "Enter") {
+            store.setSearchBar(text)
             store.searchText(text)
         }
     }

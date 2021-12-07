@@ -53,6 +53,14 @@ function GlobalStoreContextProvider(props) {
     // SINCE WE'VE WRAPPED THE STORE IN THE AUTH CONTEXT WE CAN ACCESS THE USER HERE
     const { auth } = useContext(AuthContext);
 
+    const [searchBar, setSearchBar] = useState("")
+    store.setSearchBar = function (text) {
+        setSearchBar(text)
+    }
+    store.getSearchBar = function () {
+        return searchBar
+    }
+
     // HERE'S THE DATA STORE'S REDUCER, IT MUST
     // HANDLE EVERY TYPE OF STATE CHANGE
     const storeReducer = (action) => {
@@ -605,7 +613,7 @@ function GlobalStoreContextProvider(props) {
                 viewMode = 1
                 pairsArray = pairsArray.filter(ele => ele.userName === auth.user.userName)
 
-                pairsArray = pairsArray.filter(ele => ele.name.startsWith(searchText))
+                pairsArray = pairsArray.filter(ele => ele.name.toLowerCase().startsWith(searchText.toLowerCase()))
 
                 if (sortOrder === 0) {
                     // no specification
@@ -615,7 +623,7 @@ function GlobalStoreContextProvider(props) {
                 viewMode = 2
                 pairsArray = pairsArray.filter(ele => ele.isPublished === true && ele.isCommunityList === false)
 
-                pairsArray = pairsArray.filter(ele => ele.name.startsWith(searchText))
+                pairsArray = pairsArray.filter(ele => ele.name.toLowerCase().startsWith(searchText.toLowerCase()))
 
                 if (sortOrder === 0) {
                     // newest first
@@ -626,7 +634,7 @@ function GlobalStoreContextProvider(props) {
                 viewMode = 3
                 pairsArray = pairsArray.filter(ele => ele.isPublished === true && ele.isCommunityList === false)
 
-                pairsArray = pairsArray.filter(ele => ele.userName.startsWith(searchText))
+                pairsArray = pairsArray.filter(ele => ele.userName.toLowerCase().startsWith(searchText.toLowerCase()))
                 if (!searchText) {
                     pairsArray = []
                 }
@@ -639,7 +647,7 @@ function GlobalStoreContextProvider(props) {
                 viewMode = 4
                 pairsArray = pairsArray.filter(ele => ele.isCommunityList === true)
 
-                pairsArray = pairsArray.filter(ele => ele.name.startsWith(searchText))
+                pairsArray = pairsArray.filter(ele => ele.name.toLowerCase().startsWith(searchText.toLowerCase()))
 
                 if (sortOrder === 0) {
                     // newest first
@@ -692,7 +700,7 @@ function GlobalStoreContextProvider(props) {
     }
 
     store.searchText = async function (searchText) {
-        store.setViewMode(store.viewMode, searchText, -1)
+        store.setViewMode(store.viewMode, searchText, 0)
     }
 
     return (

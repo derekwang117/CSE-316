@@ -28,11 +28,12 @@ function Statusbar() {
                 color="primary"
                 aria-label="add"
                 id="add-list-button"
+                size="medium"
                 onClick={handleCreateNewList}
             >
                 <AddIcon />
             </Fab>
-            <Typography variant="h2">Your Lists</Typography>
+            <Typography variant="h3">Your Lists</Typography>
         </div>
     )
 
@@ -46,7 +47,14 @@ function Statusbar() {
     if (store.currentList) {
         display = null
     }
-
+    if (store.viewMode !== 1) {
+        display = (
+            <div id="top5-statusbar">
+                <Typography variant="h3">{store.getSearchBar()}</Typography>
+            </div>
+        )
+    }
+    
     return (
         display
     );
