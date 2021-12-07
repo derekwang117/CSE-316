@@ -129,16 +129,23 @@ deleteTop5List = async (req, res) => {
             Top5List.findOne({ name: top5List.name, isCommunityList: true }, (err, communityList) => {
                 for (let i = 0; i < 5; i++) {
                     let element = communityList.communityListRanking.find(element => element.name === top5List.items[i])
-                    element.score = element.score - (5-i);
+                    element.score = element.score - (5 - i);
                 }
                 communityList.communityListRanking.sort((a, b) => (b.score > a.score) ? 1 : (a.score > b.score) ? -1 : 0)
                 let auxList = []
                 for (let i = 0; i < 5; i++) {
                     auxList.push(communityList.communityListRanking[i].name)
                 }
-                communityList.items = auxList
 
-                communityList.save()
+                if (communityList.communityListRanking[0].score === 0) {
+                    Top5List.findOneAndDelete({ _id: communityList._id }, () => {
+                    }).catch(err => console.log(err))
+                }
+                else {
+                    communityList.items = auxList
+
+                    communityList.save()
+                }
             })
         }
         Top5List.findOneAndDelete({ _id: req.params.id }, () => {
