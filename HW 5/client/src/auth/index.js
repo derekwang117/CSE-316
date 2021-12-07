@@ -114,14 +114,7 @@ function AuthContextProvider(props) {
     auth.registerUser = async function (userData, store) {
         const response = await api.registerUser(userData);
         if (response.status === 200) {
-            authReducer({
-                type: AuthActionType.REGISTER_USER,
-                payload: {
-                    user: response.data.user
-                }
-            })
-            history.push("/");
-            store.loadIdNamePairs();
+            history.push('/login/')
         }
         else if (response.status === 400) {
             authReducer({
